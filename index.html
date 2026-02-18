@@ -642,10 +642,11 @@
 
     /* ═══ PRELOADING ═══ */
     const isPortraitDevice = window.innerHeight > window.innerWidth;
-    let logoLoaded = false, firstReady = false;
+    let logoLoaded = false, firstReady = false, firstImageLoaded = false;
 
     function startApp() {
       if (firstReady) return;
+      if (!logoLoaded || !firstImageLoaded) return;
       firstReady = true;
       prepareWhiteLogo();
       loader.classList.add('hidden');
@@ -656,7 +657,8 @@
       requestAnimationFrame(render);
     }
 
-    logoImg.onload = () => { logoLoaded = true; prepareWhiteLogo(); };
+    logoImg.onload = () => { logoLoaded = true; prepareWhiteLogo(); startApp(); };
+    logoImg.onerror = () => { logoLoaded = true; startApp(); };
     if (logoImg.complete && logoImg.naturalWidth) { logoLoaded = true; prepareWhiteLogo(); }
 
     /* Load only the set needed for current device first */
@@ -668,8 +670,9 @@
     /* Load primary set — start app as soon as logo + first treatment are ready */
     TREATMENTS.forEach((t, i) => {
       const img = new Image(); img.src = t[primaryKey];
-      img.onload = () => { if (i === 0 && logoLoaded) startApp(); };
-      if (img.complete && img.naturalWidth && i === 0 && logoLoaded) startApp();
+      img.onload = () => { if (i === 0) { firstImageLoaded = true; startApp(); } };
+      img.onerror = () => { if (i === 0) { firstImageLoaded = true; startApp(); } };
+      if (img.complete && img.naturalWidth && i === 0) firstImageLoaded = true;
       primaryArr[i] = img;
     });
 
@@ -683,7 +686,11 @@
 
     resize();
     /* If logo already loaded and first image cached, start immediately */
-    if (logoLoaded && primaryArr[0] && primaryArr[0].complete && primaryArr[0].naturalWidth) startApp();
+    if (logoLoaded && primaryArr[0] && primaryArr[0].complete && primaryArr[0].naturalWidth) {
+      firstImageLoaded = true; startApp();
+    }
+    /* Safety timeout — never stay stuck on loader for more than 5s */
+    setTimeout(() => { logoLoaded = true; firstImageLoaded = true; startApp(); }, 5000);
 
     /* ═══ RENDER ═══ */
     let lastSeed = 0;
