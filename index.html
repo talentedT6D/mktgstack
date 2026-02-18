@@ -40,7 +40,7 @@
 
     /* ── Social icons (top-left) ── */
     .social-icons {
-      position: absolute; top: 48px; left: 56px;
+      position: absolute; top: 53px; left: 62px;
       display: flex; gap: 10px; align-items: center;
     }
     .social-icons a {
@@ -50,21 +50,21 @@
     }
     .social-icons a:hover { transform: scale(1.08); }
     .social-icons a img {
-      height: 48px; width: auto;
+      height: 56px; width: auto;
     }
     /* no inversion — icons stay yellow */
 
     /* ── Grid wordmark (top-right) ── */
     .grid-wordmark {
-      position: absolute; top: 44px; right: 56px;
-      height: 44px; width: auto;
+      position: absolute; top: 48px; right: 62px;
+      height: 58px; width: auto;
       transition: filter 0.3s ease;
     }
     /* no inversion — wordmark stays yellow */
 
     /* ── Shuffle button (bottom-left) ── */
     .shuffle-btn {
-      position: absolute; bottom: 48px; left: 56px;
+      position: absolute; bottom: 49px; left: 62px;
       background: none; border: none; padding: 0;
       cursor: pointer;
       transition: transform 0.15s ease;
@@ -72,7 +72,7 @@
     .shuffle-btn:hover { transform: scale(1.08); }
     .shuffle-btn:active { transform: scale(0.92); }
     .shuffle-btn img {
-      height: 48px; width: auto;
+      height: 56px; width: auto;
     }
     /* no inversion — shuffle stays yellow */
     .shuffle-btn.shuffling { animation: shufflePop 0.4s ease; }
@@ -188,6 +188,18 @@
 
     /* ── Mobile responsive ── */
 
+    /* ── Desktop tagline below logo ── */
+    .desktop-tagline {
+      position: absolute;
+      bottom: 67px;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      width: 28.8%;
+      max-width: 416px;
+      pointer-events: none;
+      z-index: 4;
+    }
+
     /* Tablet */
     @media (max-width: 1024px) {
       .sticker-stamp { width: 260px; }
@@ -199,6 +211,7 @@
       .social-icons { display: none; }
       .grid-wordmark { display: none; }
       .shuffle-btn { display: none; }
+      .desktop-tagline { display: none; }
       .mobile-ui { display: block; }
       .sticker-stamp { width: 200px; }
       .sticker-cursor { width: 200px; }
@@ -304,6 +317,8 @@
     </button>
 
     <div class="treatment-label" id="treatment-label">fuzzy</div>
+
+    <img class="desktop-tagline" src="Asset 7.png" alt="The answer to every marketing problem isn't an advertising campaign." draggable="false" />
   </div>
 
   <!-- Mobile UI (hidden on desktop, shown on <=768px) -->
@@ -774,12 +789,11 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          /* Contain-fit the full logo within DESK_LOGO_SCALE of the viewport — no cropping */
-          const maxW = W * DESK_LOGO_SCALE, maxH = H * DESK_LOGO_SCALE;
-          const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
-          const bx = (W - fit.dw) / 2;
-          const by = (H - fit.dh) / 2;
-          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
+          const c = coverRect(logoCanvas.width, logoCanvas.height, W, H);
+          const bw = W * DESK_LOGO_SCALE, bh = H * DESK_LOGO_SCALE;
+          const bx = (W - bw) / 2;
+          const by = (H - bh) / 2;
+          mainCtx.drawImage(logoCanvas, c.sx, c.sy, c.sw, c.sh, bx, by, bw, bh);
         }
         mainCtx.globalCompositeOperation = 'source-over';
       }
