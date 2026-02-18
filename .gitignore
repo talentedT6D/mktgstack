@@ -1,0 +1,36 @@
+# Original large stills (PNGs, 7-17MB each)
+stills/
+For Aden/
+For Aden.zip
+
+# Python scripts (generation/alignment tools)
+*.py
+__pycache__/
+
+# Verification/debug images
+alignment_*.png
+fuzzy_verify.png
+fuzzy_vs_neon.png
+mainPage.png
+grid.png
+gif-poster.jpg
+gif.gif
+gif.mp4
+stacks.mp4
+
+# Snapshots/debug
+snapshots/
+align-loop.sh
+
+# Zip files
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Vercel
+.vercelignore

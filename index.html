@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKTG STACK</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #1a1a1a;
+      font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+      position: fixed;
+      inset: 0;
+    }
+
+    .layer {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+
+    /* ── Dot grid ── */
+    #dot-grid { z-index: 1; pointer-events: none; }
+
+    /* ── Main compositing canvas ── */
+    #main-canvas { z-index: 3; }
+
+    /* ── UI overlay ── */
+    #ui-overlay { z-index: 10; pointer-events: none; }
+    #ui-overlay a, #ui-overlay button { pointer-events: auto; }
+
+    /* ── Social icons (top-left) ── */
+    .social-icons {
+      position: absolute; top: 48px; left: 56px;
+      display: flex; gap: 10px; align-items: center;
+    }
+    .social-icons a {
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    .social-icons a:hover { transform: scale(1.08); }
+    .social-icons a img {
+      height: 48px; width: auto;
+    }
+    /* no inversion — icons stay yellow */
+
+    /* ── Grid wordmark (top-right) ── */
+    .grid-wordmark {
+      position: absolute; top: 44px; right: 56px;
+      height: 44px; width: auto;
+      transition: filter 0.3s ease;
+    }
+    /* no inversion — wordmark stays yellow */
+
+    /* ── Shuffle button (bottom-left) ── */
+    .shuffle-btn {
+      position: absolute; bottom: 48px; left: 56px;
+      background: none; border: none; padding: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .shuffle-btn:hover { transform: scale(1.08); }
+    .shuffle-btn:active { transform: scale(0.92); }
+    .shuffle-btn img {
+      height: 48px; width: auto;
+    }
+    /* no inversion — shuffle stays yellow */
+    .shuffle-btn.shuffling { animation: shufflePop 0.4s ease; }
+    @keyframes shufflePop {
+      0%   { transform: scale(1) rotate(0deg); }
+      30%  { transform: scale(1.25) rotate(-15deg); }
+      60%  { transform: scale(0.9) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* ── Treatment label (hidden) ── */
+    .treatment-label { display: none; }
+
+    /* ── Shuffle burst ── */
+    #shuffle-burst {
+      position: fixed; z-index: 5; pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      transform: scale(0); opacity: 0;
+      will-change: transform, opacity;
+    }
+    #shuffle-burst.active {
+      animation: burstExpand 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes burstExpand {
+      0%   { transform: scale(0); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* ── Sticker mode ── */
+    .sticker-layer {
+      position: fixed; inset: 0;
+      z-index: 4; pointer-events: none;
+      display: none;
+    }
+    body.sticker-mode .sticker-layer { display: block; pointer-events: auto; }
+    body.sticker-mode { cursor: none; }
+    .sticker-cursor {
+      position: fixed;
+      width: 400px; height: auto;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      opacity: 0.6;
+      display: none;
+    }
+    body.sticker-mode .sticker-cursor { display: block; }
+    .sticker-stamp {
+      position: absolute;
+      width: 400px; height: auto;
+      --rot: 0deg;
+      transform: translate(-50%, -50%) scale(0) rotate(0deg);
+      animation: stickerPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      pointer-events: none;
+    }
+    .sticker-stamp img {
+      width: 100%; height: auto;
+    }
+    @keyframes stickerPop {
+      0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(var(--rot)); }
+    }
+    .sticker-stamp.popping-out {
+      animation: stickerPopOut 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    }
+    @keyframes stickerPopOut {
+      0%   { transform: translate(-50%, -50%) scale(1) rotate(var(--rot)); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0) rotate(calc(var(--rot) + 180deg)); opacity: 0; }
+    }
+
+    /* ── Mobile UI elements (hidden on desktop) ── */
+    .mobile-ui {
+      display: none;
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .mobile-ui a, .mobile-ui button { pointer-events: auto; }
+
+    .mobile-wordmark {
+      position: absolute; bottom: 205px; right: 32px;
+      height: 36px; width: auto;
+    }
+    .mobile-tagline {
+      position: absolute; bottom: 150px; right: 32px;
+      text-align: right;
+      color: rgba(255, 255, 255, 0.85);
+      font-family: 'Arial', 'Helvetica Neue', sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 400;
+      max-width: 280px;
+    }
+    .mobile-social {
+      position: absolute; bottom: 78px; right: 32px;
+      display: flex; gap: 12px; align-items: center;
+    }
+    .mobile-social a {
+      display: flex; text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    .mobile-social a:hover { transform: scale(1.08); }
+    .mobile-social a img { height: 48px; width: auto; }
+    .mobile-shuffle {
+      position: absolute; bottom: 72px; left: 28px;
+      background: none; border: none; padding: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .mobile-shuffle:active { transform: scale(0.92); }
+    .mobile-shuffle img { height: 56px; width: auto; }
+    .mobile-shuffle.shuffling { animation: shufflePop 0.4s ease; }
+
+    /* ── Mobile responsive ── */
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .sticker-stamp { width: 260px; }
+      .sticker-cursor { width: 260px; }
+    }
+
+    /* Phone / portrait — switch to mobile UI */
+    @media (max-width: 768px) {
+      .social-icons { display: none; }
+      .grid-wordmark { display: none; }
+      .shuffle-btn { display: none; }
+      .mobile-ui { display: block; }
+      .sticker-stamp { width: 200px; }
+      .sticker-cursor { width: 200px; }
+    }
+
+    @media (max-width: 480px) {
+      .mobile-wordmark { bottom: 192px; right: 24px; height: 32px; }
+      .mobile-tagline { bottom: 140px; right: 24px; font-size: 14px; max-width: 240px; }
+      .mobile-social { bottom: 66px; right: 24px; gap: 10px; }
+      .mobile-social a img { height: 44px; }
+      .mobile-shuffle { bottom: 60px; left: 24px; }
+      .mobile-shuffle img { height: 50px; }
+      .sticker-stamp { width: 140px; }
+      .sticker-cursor { width: 140px; }
+    }
+
+    @media (max-width: 360px) {
+      .mobile-wordmark { bottom: 178px; right: 20px; height: 28px; }
+      .mobile-tagline { bottom: 128px; right: 20px; font-size: 13px; max-width: 210px; }
+      .mobile-social { bottom: 60px; right: 20px; gap: 8px; }
+      .mobile-social a img { height: 40px; }
+      .mobile-shuffle { bottom: 54px; left: 20px; }
+      .mobile-shuffle img { height: 46px; }
+      .sticker-stamp { width: 120px; }
+    }
+
+    /* Landscape phone — tighter vertical spacing */
+    @media (max-height: 500px) {
+      .social-icons { top: 8px; left: 10px; }
+      .grid-wordmark { top: 6px; right: 10px; height: 24px; }
+      .shuffle-btn { bottom: 8px; left: 10px; }
+    }
+
+    /* Hide sticker cursor on touch — finger is the cursor */
+    @media (hover: none) {
+      .sticker-cursor { display: none !important; }
+      body.sticker-mode { cursor: auto; }
+    }
+
+    /* ── Loading ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #1a1a1a; display: flex;
+      flex-direction: column; gap: 16px;
+      align-items: center; justify-content: center;
+      transition: opacity 0.8s ease;
+    }
+    #loader.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid #2a2a2a;
+      border-top-color: #E8E430; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .load-text {
+      color: rgba(232, 228, 48, 0.4);
+      font-size: 10px; letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="load-text">Loading</div>
+  </div>
+
+  <canvas id="dot-grid" class="layer"></canvas>
+  <canvas id="main-canvas" class="layer"></canvas>
+
+  <svg style="position:absolute;width:0;height:0;pointer-events:none;" aria-hidden="true">
+    <defs>
+      <filter id="liquid-distort" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.018 0.018"
+          numOctaves="3" seed="5" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="28"
+          xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div id="shuffle-burst"></div>
+
+  <div id="ui-overlay" class="layer">
+    <div class="social-icons" id="social-icons">
+      <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="iconsDesktop/Asset 14.png" alt="LinkedIn" draggable="false" />
+      </a>
+      <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X">
+        <img src="iconsDesktop/Asset 13.png" alt="X" draggable="false" />
+      </a>
+      <a href="https://www.instagram.com/mktgstack?igsh=c3BjN3N0aXlucWto" target="_blank" rel="noopener" aria-label="Instagram">
+        <img src="iconsDesktop/Asset 12.png" alt="Instagram" draggable="false" />
+      </a>
+    </div>
+
+    <!-- Grid wordmark — top-right -->
+    <img class="grid-wordmark" id="grid-wordmark" src="iconsDesktop/Asset 16.png" alt="talented (grid of companies)" />
+
+    <button class="shuffle-btn" id="shuffle-btn" aria-label="Shuffle treatment">
+      <img src="iconsDesktop/Asset 15.png" alt="Shuffle" draggable="false" />
+    </button>
+
+    <div class="treatment-label" id="treatment-label">fuzzy</div>
+  </div>
+
+  <!-- Mobile UI (hidden on desktop, shown on <=768px) -->
+  <div class="mobile-ui" id="mobile-ui">
+    <img class="mobile-wordmark" src="iconsMob/Asset 11.png" alt="talented (grid of companies)" />
+    <p class="mobile-tagline">The answer to every marketing problem isn't an advertising campaign.</p>
+    <div class="mobile-social">
+      <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="iconsMob/Asset 9.png" alt="LinkedIn" draggable="false" />
+      </a>
+      <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X">
+        <img src="iconsMob/Asset 8.png" alt="X" draggable="false" />
+      </a>
+      <a href="https://www.instagram.com/mktgstack?igsh=c3BjN3N0aXlucWto" target="_blank" rel="noopener" aria-label="Instagram">
+        <img src="iconsMob/Asset 7.png" alt="Instagram" draggable="false" />
+      </a>
+    </div>
+    <button class="mobile-shuffle" id="mobile-shuffle-btn" aria-label="Shuffle treatment">
+      <img src="iconsMob/Asset 10.png" alt="Shuffle" draggable="false" />
+    </button>
+  </div>
+
+  <!-- Sticker cursor preview + placement layer -->
+  <img class="sticker-cursor" id="sticker-cursor" src="sticker.png" alt="" draggable="false" />
+  <div class="sticker-layer" id="sticker-layer"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ═══ TREATMENTS ═══ */
+    const TREATMENTS = [
+      { src: 'compressed_stills/desktop/neon_topaz.jpg',      mobileSrc: 'compressed_stills/mobile/neon_mobile_topaz.jpg',      name: 'neon' },
+      { src: 'compressed_stills/desktop/fuzzy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/fuzzy_mobile_topaz.jpg',     name: 'fuzzy' },
+      { src: 'compressed_stills/desktop/candy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/candy_mobile_topaz.jpg',     name: 'candy' },
+      { src: 'compressed_stills/desktop/balloon_topaz.jpg',   mobileSrc: 'compressed_stills/mobile/balloon_mobile_topaz.jpg',   name: 'balloon' },
+      { src: 'compressed_stills/desktop/metallic_topaz.jpg',  mobileSrc: 'compressed_stills/mobile/metallic_mobile_topaz.jpg',  name: 'metallic' },
+      { src: 'compressed_stills/desktop/chrome_topaz.jpg',    mobileSrc: 'compressed_stills/mobile/chrome_mobile_topaz.jpg',    name: 'chrome' },
+    ];
+    let currentTreatment = 0;
+    let prevTreatment = 0;
+    let lastTreatmentSwitch = 0;
+    let treatmentFade = 1.0;
+    const TREATMENT_INTERVAL = 1250;  /* 1.25s per image */
+    const TREATMENT_FADE_MS = 800;    /* smooth crossfade */
+    const treatmentImages = [];
+    const mobileTreatmentImages = [];
+
+    /* ═══ DOM ═══ */
+    const dotCanvas  = document.getElementById('dot-grid');
+    const mainCanvas = document.getElementById('main-canvas');
+    const loader     = document.getElementById('loader');
+    const turbEl     = document.getElementById('turb');
+    const labelEl    = document.getElementById('treatment-label');
+    const socialEl   = document.getElementById('social-icons');
+    const gridWmEl   = document.getElementById('grid-wordmark');
+    const shuffleEl  = document.getElementById('shuffle-btn');
+
+    /* ═══ CONTEXTS ═══ */
+    const dotCtx  = dotCanvas.getContext('2d');
+    const mainCtx = mainCanvas.getContext('2d');
+    const blobCanvas = document.createElement('canvas');
+    const blobCtx    = blobCanvas.getContext('2d');
+    const blurCanvas = document.createElement('canvas');
+    const blurCtx    = blurCanvas.getContext('2d');
+
+    const logoCanvas = document.createElement('canvas');
+    const logoCtx    = logoCanvas.getContext('2d');
+
+    /* ═══ LOGO ═══ */
+    const logoImg = new Image();
+    logoImg.src = 'stack-logo.png';
+
+    /* ═══ SIZING ═══ */
+    let W, H;
+    function resize() {
+      W = document.documentElement.clientWidth;
+      H = document.documentElement.clientHeight;
+      dotCanvas.width  = W;  dotCanvas.height  = H;
+      mainCanvas.width = W;  mainCanvas.height = H;
+      blobCanvas.width = W;  blobCanvas.height = H;
+      blurCanvas.width = W;  blurCanvas.height = H;
+      buildDotPattern();
+      prepareWhiteLogo();
+    }
+
+    function prepareWhiteLogo() {
+      if (!logoImg.naturalWidth) return;
+      const w = logoImg.naturalWidth, h = logoImg.naturalHeight;
+      logoCanvas.width = w; logoCanvas.height = h;
+      logoCtx.clearRect(0, 0, w, h);
+      /* Draw original logo to extract alpha from its dark pixels */
+      logoCtx.drawImage(logoImg, 0, 0);
+      const data = logoCtx.getImageData(0, 0, w, h);
+      const px = data.data;
+      for (let i = 0; i < px.length; i += 4) {
+        /* Original is dark logo on white bg — dark pixels are the logo */
+        const brightness = (px[i] + px[i+1] + px[i+2]) / 3;
+        /* Invert: make logo white, set alpha based on how dark the original was */
+        px[i] = 255; px[i+1] = 255; px[i+2] = 255;
+        px[i+3] = Math.round(255 - brightness);
+      }
+      logoCtx.putImageData(data, 0, 0);
+    }
+
+    /* ═══ DOT GRID ═══ */
+    let dotPattern = null;
+    function buildDotPattern() {
+      const s = 48, tile = document.createElement('canvas');
+      tile.width = s; tile.height = s;
+      const tc = tile.getContext('2d');
+      tc.fillStyle = 'rgba(255,255,255,0.035)';
+      tc.beginPath(); tc.arc(s/2, s/2, 1, 0, Math.PI*2); tc.fill();
+      dotPattern = dotCtx.createPattern(tile, 'repeat');
+    }
+
+    /* ═══ MOUSE STATE ═══ */
+    let mouseX = 0, mouseY = 0;
+    let cursorX = 0, cursorY = 0;
+    let prevCX = 0, prevCY = 0;
+    let mouseIn = false;
+    let targetAlpha = 0, curAlpha = 0;
+    const trail = [];
+    const TRAIL_LIFE = 1800;  /* long-lasting trails like flowing paint */
+    const LERP = 0.10;        /* slightly slower follow for flowing feel */
+
+    /* ═══ EVENTS ═══ */
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      mouseIn = true; targetAlpha = 1;
+      if (stickerMode) {
+        stickerCursor.style.left = e.clientX + 'px';
+        stickerCursor.style.top = e.clientY + 'px';
+      }
+    });
+    document.addEventListener('mouseleave', () => { mouseIn = false; targetAlpha = 0; });
+    document.addEventListener('mouseenter', () => { mouseIn = true; targetAlpha = 1; });
+
+    /* Touch support for blob reveal */
+    document.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      mouseX = t.clientX; mouseY = t.clientY;
+      cursorX = mouseX; cursorY = mouseY;
+      mouseIn = true; targetAlpha = 1;
+    }, { passive: true });
+    document.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      mouseX = t.clientX; mouseY = t.clientY;
+      mouseIn = true; targetAlpha = 1;
+    }, { passive: true });
+    document.addEventListener('touchend', () => { mouseIn = false; targetAlpha = 0; });
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', () => setTimeout(resize, 100));
+
+    /* ═══ MODE TOGGLE ═══ */
+    let stickerMode = false;
+    const stickerLayer = document.getElementById('sticker-layer');
+    const stickerCursor = document.getElementById('sticker-cursor');
+    const MAX_STICKERS = 20;
+    let stickerCount = 0;
+
+    /* Sticker image pool — cycle through sequentially */
+    const STICKER_SRCS = [
+      'sticker.png',
+      '1x/Asset 1.png',
+      '1x/Asset 2.png',
+      '1x/Asset 3.png',
+      '1x/Asset 4.png',
+    ];
+    let stickerIndex = 0;
+
+    /* Shuffle toggle logic */
+    function toggleStickerMode(btnEl) {
+      stickerMode = !stickerMode;
+      document.body.classList.toggle('sticker-mode', stickerMode);
+      labelEl.textContent = stickerMode ? 'sticker' : TREATMENTS[currentTreatment].name;
+
+      /* Clear stickers when exiting sticker mode */
+      if (!stickerMode) {
+        stickerLayer.innerHTML = '';
+        stickerCount = 0;
+        stickerIndex = 0;
+      } else {
+        /* Set cursor to current sticker */
+        stickerCursor.src = STICKER_SRCS[stickerIndex];
+      }
+
+      /* pop animation */
+      btnEl.classList.remove('shuffling');
+      void btnEl.offsetWidth;
+      btnEl.classList.add('shuffling');
+    }
+
+    /* Desktop shuffle button */
+    shuffleEl.addEventListener('click', () => toggleStickerMode(shuffleEl));
+
+    /* Mobile shuffle button */
+    const mobileShuffleEl = document.getElementById('mobile-shuffle-btn');
+    if (mobileShuffleEl) {
+      mobileShuffleEl.addEventListener('click', () => toggleStickerMode(mobileShuffleEl));
+    }
+
+    /* Pop sound via Web Audio API */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playPop() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.12);
+    }
+
+    /* Get sticker size based on screen width */
+    function getStickerSize() {
+      if (window.innerWidth <= 480) return 150;
+      if (window.innerWidth <= 768) return 200;
+      return 400;
+    }
+
+    /* Place sticker at coordinates */
+    function placeSticker(x, y) {
+      if (!stickerMode) return;
+      if (stickerCount >= MAX_STICKERS) {
+        const stamps = stickerLayer.querySelectorAll('.sticker-stamp');
+        stamps.forEach((s, i) => {
+          setTimeout(() => { s.classList.add('popping-out'); }, i * 40);
+        });
+        setTimeout(() => {
+          stickerLayer.innerHTML = '';
+          stickerCount = 0;
+        }, stamps.length * 40 + 450);
+        return;
+      }
+      playPop();
+      const rot = Math.floor(Math.random() * 360);
+      const sticker = document.createElement('div');
+      sticker.className = 'sticker-stamp';
+      sticker.style.left = x + 'px';
+      sticker.style.top = y + 'px';
+      sticker.style.zIndex = 1000 + stickerCount;
+      sticker.style.setProperty('--rot', rot + 'deg');
+      const src = STICKER_SRCS[stickerIndex];
+      sticker.innerHTML = '<img src="' + src + '" alt="" draggable="false" />';
+      stickerLayer.appendChild(sticker);
+      stickerCount++;
+      /* Advance to next sticker, loop around */
+      stickerIndex = (stickerIndex + 1) % STICKER_SRCS.length;
+      stickerCursor.src = STICKER_SRCS[stickerIndex];
+    }
+
+    /* Click/tap to place sticker */
+    stickerLayer.addEventListener('click', (e) => {
+      placeSticker(e.clientX, e.clientY);
+    });
+    /* Touch support for sticker placement */
+    stickerLayer.addEventListener('touchend', (e) => {
+      if (!stickerMode || !e.changedTouches.length) return;
+      e.preventDefault();
+      const t = e.changedTouches[0];
+      placeSticker(t.clientX, t.clientY);
+    });
+
+    /* ═══ HELPERS ═══ */
+    function coverRect(iw, ih, cw, ch) {
+      const ir = iw / ih, cr = cw / ch;
+      let sx, sy, sw, sh;
+      if (ir > cr) { sh = ih; sw = ih * cr; sx = (iw - sw) / 2; sy = 0; }
+      else         { sw = iw; sh = iw / cr; sx = 0; sy = (ih - sh) / 2; }
+      return { sx, sy, sw, sh };
+    }
+
+    /* contain-fit: returns dest x, y, w, h to fit image inside container */
+    function containRect(iw, ih, cw, ch) {
+      const scale = Math.min(cw / iw, ch / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+      return { dx: (cw - dw) / 2, dy: (ch - dh) / 2, dw, dh };
+    }
+
+    /* width-fit: scale to fill width, center vertically (no horizontal crop) */
+    function widthFitRect(iw, ih, cw, ch) {
+      const scale = cw / iw;
+      const dw = cw;
+      const dh = ih * scale;
+      return { dx: 0, dy: (ch - dh) / 2, dw, dh };
+    }
+
+    /* ═══ FLOWING LIQUID BLOB — big, organic, ribbon-like ═══ */
+    function drawBlob(ctx, x, y, rx, ry, angle, alpha, t) {
+      if (alpha < 0.003 || rx < 2) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      const N = 96; /* more segments = smoother organic shape */
+      for (let i = 0; i <= N; i++) {
+        const a = (i / N) * Math.PI * 2;
+        /* multiple harmonics for that flowing red-blob feel */
+        const w = 1
+          + 0.10 * Math.sin(a * 2  + t * 0.0018)
+          + 0.07 * Math.sin(a * 3  + t * 0.0028 + 0.8)
+          + 0.05 * Math.sin(a * 5  + t * 0.0038 + 2.1)
+          + 0.04 * Math.sin(a * 7  + t * 0.0015 + 3.5)
+          + 0.03 * Math.sin(a * 11 + t * 0.0022 + 5.0)
+          + 0.02 * Math.sin(a * 13 + t * 0.0045 + 1.3);
+        const px = Math.cos(a) * rx * w;
+        const py = Math.sin(a) * ry * w;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* ═══ INVERSION ═══ */
+    function checkInversion(bx, by, br) {
+      [socialEl, gridWmEl, shuffleEl, labelEl].forEach(el => {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const d = Math.hypot(bx - cx, by - cy);
+        el.classList.toggle('inverted', d < br + Math.max(r.width, r.height) * 0.6);
+      });
+    }
+
+    /* ═══ PRELOADING ═══ */
+    const isPortraitDevice = window.innerHeight > window.innerWidth;
+    let logoLoaded = false, firstReady = false;
+
+    function startApp() {
+      if (firstReady) return;
+      firstReady = true;
+      prepareWhiteLogo();
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 800);
+      cursorX = prevCX = W / 2;
+      cursorY = prevCY = H / 2;
+      lastTreatmentSwitch = performance.now();
+      requestAnimationFrame(render);
+    }
+
+    logoImg.onload = () => { logoLoaded = true; prepareWhiteLogo(); };
+    if (logoImg.complete && logoImg.naturalWidth) { logoLoaded = true; prepareWhiteLogo(); }
+
+    /* Load only the set needed for current device first */
+    const primaryKey = isPortraitDevice ? 'mobileSrc' : 'src';
+    const secondaryKey = isPortraitDevice ? 'src' : 'mobileSrc';
+    const primaryArr = isPortraitDevice ? mobileTreatmentImages : treatmentImages;
+    const secondaryArr = isPortraitDevice ? treatmentImages : mobileTreatmentImages;
+
+    /* Load primary set — start app as soon as logo + first treatment are ready */
+    TREATMENTS.forEach((t, i) => {
+      const img = new Image(); img.src = t[primaryKey];
+      img.onload = () => { if (i === 0 && logoLoaded) startApp(); };
+      if (img.complete && img.naturalWidth && i === 0 && logoLoaded) startApp();
+      primaryArr[i] = img;
+    });
+
+    /* Lazy-load secondary set after primary is done */
+    window.addEventListener('load', () => {
+      TREATMENTS.forEach((t, i) => {
+        const img = new Image(); img.src = t[secondaryKey];
+        secondaryArr[i] = img;
+      });
+    });
+
+    resize();
+    /* If logo already loaded and first image cached, start immediately */
+    if (logoLoaded && primaryArr[0] && primaryArr[0].complete && primaryArr[0].naturalWidth) startApp();
+
+    /* ═══ RENDER ═══ */
+    let lastSeed = 0;
+
+    function render() {
+      const now = performance.now();
+
+      /* ── Auto-cycle treatments while hovering (smooth crossfade) — skip in sticker mode ── */
+      if (!stickerMode && mouseIn && now - lastTreatmentSwitch > TREATMENT_INTERVAL) {
+        prevTreatment = currentTreatment;
+        currentTreatment = (currentTreatment + 1) % TREATMENTS.length;
+        labelEl.textContent = TREATMENTS[currentTreatment].name;
+        lastTreatmentSwitch = now;
+        treatmentFade = 0.0;
+      }
+      if (treatmentFade < 1.0) {
+        treatmentFade = Math.min(1.0, (now - lastTreatmentSwitch) / TREATMENT_FADE_MS);
+      }
+
+      /* ── Cursor lerp (smooth, flowing) ── */
+      prevCX = cursorX; prevCY = cursorY;
+      cursorX += (mouseX - cursorX) * LERP;
+      cursorY += (mouseY - cursorY) * LERP;
+      const vx = cursorX - prevCX;
+      const vy = cursorY - prevCY;
+      const speed = Math.hypot(vx, vy);
+      const angle = Math.atan2(vy, vx);
+
+      /* ── Alpha fade ── */
+      curAlpha += (targetAlpha - curAlpha) * 0.04; /* slower fade = more presence */
+
+      /* ── Trail — denser, longer-lived ── */
+      if (mouseIn && speed > 0.15) {
+        trail.push({ x: cursorX, y: cursorY, t: now, speed, angle });
+      }
+      while (trail.length && now - trail[0].t > TRAIL_LIFE) trail.shift();
+
+      /* ── Turbulence shimmer ── */
+      const seedFrame = Math.floor(now / 150);
+      if (seedFrame !== lastSeed) {
+        lastSeed = seedFrame;
+        turbEl.setAttribute('seed', seedFrame % 999);
+      }
+
+      /* ════════════════════════════
+         MAIN COMPOSITE
+         ════════════════════════════ */
+      mainCtx.clearRect(0, 0, W, H);
+
+      /* ── Logo: static, no drift/breathing ── */
+      const breathe = 1;
+      const px = 0;
+      const py = 0;
+
+      /* 1. Dark bg */
+      mainCtx.fillStyle = '#1a1a1a';
+      mainCtx.fillRect(0, 0, W, H);
+
+      /* 2. Draw white logo — ALWAYS visible in both modes */
+      const isPortrait = H > W;
+      /* ── Mobile logo tuning ── */
+      const MOB_LOGO_W_SCALE = 1.12;  /* horizontal width scale (wider to match treatments) */
+      const MOB_LOGO_Y_POS   = 0.39;  /* vertical center position (0=top, 0.5=middle) */
+      /* ── Desktop logo tuning ── */
+      const DESK_LOGO_SCALE  = 0.7;
+      if (logoCanvas.width > 1) {
+        mainCtx.globalCompositeOperation = 'screen';
+        if (isPortrait) {
+          /* Width-fit with independent horizontal scaling */
+          const wf = widthFitRect(logoCanvas.width, logoCanvas.height, W, H);
+          const bw = wf.dw * MOB_LOGO_W_SCALE;
+          const bh = wf.dh * MOB_LOGO_W_SCALE; /* keep aspect ratio */
+          const bx = (W - bw) / 2;
+          const by = H * MOB_LOGO_Y_POS - bh / 2;
+          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
+        } else {
+          const c = coverRect(logoCanvas.width, logoCanvas.height, W, H);
+          const bw = W * DESK_LOGO_SCALE, bh = H * DESK_LOGO_SCALE;
+          const bx = (W - bw) / 2;
+          const by = (H - bh) / 2;
+          mainCtx.drawImage(logoCanvas, c.sx, c.sy, c.sw, c.sh, bx, by, bw, bh);
+        }
+        mainCtx.globalCompositeOperation = 'source-over';
+      }
+
+      /* 3-4. Blob reveal + treatments — only in reveal mode */
+      if (!stickerMode) {
+        /* BLOB MASK */
+        blobCtx.clearRect(0, 0, W, H);
+
+        if (curAlpha > 0.003) {
+          const REST = W <= 480 ? 35 : W <= 768 ? 50 : W <= 1024 ? 75 : 100;
+          const stretch = Math.min(speed * 4, 140);
+          const rx = REST + stretch;
+          const ry = Math.max(REST - stretch * 0.3, 45);
+
+          drawBlob(blobCtx, cursorX, cursorY, rx, ry, angle, curAlpha, now);
+
+          for (let i = 0; i < trail.length; i++) {
+            const p = trail[i];
+            const age = now - p.t;
+            const life = Math.max(0, 1 - age / TRAIL_LIFE);
+            const eased = life * life;
+            const op = eased * 0.65 * curAlpha;
+            const tr = REST * eased * 0.7;
+            const tsx = tr + Math.min(p.speed * 2, 60) * eased;
+            const tsy = Math.max(tr - Math.min(p.speed * 0.5, 20) * eased, 18);
+            drawBlob(blobCtx, p.x, p.y, tsx, tsy, p.angle, op, now);
+          }
+        }
+
+        /* Blur + liquid distort */
+        blurCtx.clearRect(0, 0, W, H);
+        blurCtx.filter = 'url(#liquid-distort) blur(14px)';
+        blurCtx.drawImage(blobCanvas, 0, 0);
+        blurCtx.filter = 'none';
+
+        /* Cut out blob shapes */
+        mainCtx.globalCompositeOperation = 'destination-out';
+        mainCtx.drawImage(blurCanvas, 0, 0);
+
+        /* Draw treatment behind the cut-outs */
+        mainCtx.globalCompositeOperation = 'destination-over';
+
+        /* ── Mobile treatment offset: shift up to align with logo ── */
+        const MOB_TREATMENT_Y_OFFSET = -0.11; /* fraction of H to shift up (negative = up) */
+
+        /* Pick the right image set: mobile 9:16 for portrait, desktop 16:9 for landscape */
+        const activeImages = isPortrait ? mobileTreatmentImages : treatmentImages;
+
+        function drawTreatment(idx, alpha) {
+          const img = activeImages[idx];
+          const iw = img ? (img.videoWidth || img.naturalWidth) : 0;
+          const ih = img ? (img.videoHeight || img.naturalHeight) : 0;
+          if (!iw || !ih) return;
+          mainCtx.globalAlpha = alpha;
+          const c = coverRect(iw, ih, W, H);
+          if (isPortrait) {
+            /* Draw at offset position for alignment */
+            const yOff = H * MOB_TREATMENT_Y_OFFSET;
+            mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, yOff, W, H);
+            /* Draw again at full size — destination-over means this only
+               shows through in the bottom gap where nothing else is drawn */
+            mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
+          } else {
+            mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
+          }
+        }
+
+        if (treatmentFade < 1.0 && prevTreatment !== currentTreatment) {
+          const ease = treatmentFade * treatmentFade * (3 - 2 * treatmentFade);
+          drawTreatment(prevTreatment, 1.0 - ease);
+          drawTreatment(currentTreatment, ease);
+        } else {
+          drawTreatment(currentTreatment, 1.0);
+        }
+
+        mainCtx.globalAlpha = 1.0;
+        mainCtx.globalCompositeOperation = 'source-over';
+      }
+
+      /* ── DOT GRID ── */
+      dotCtx.clearRect(0, 0, W, H);
+      if (dotPattern) {
+        dotCtx.fillStyle = dotPattern;
+        dotCtx.fillRect(0, 0, W, H);
+      }
+
+      /* ── INVERSION ── */
+      if (!stickerMode) {
+        const blobR = 180 + Math.min(speed * 5, 200);
+        checkInversion(cursorX, cursorY, blobR);
+      }
+
+      requestAnimationFrame(render);
+    }
+  })();
+  </script>
+</body>
+</html>
