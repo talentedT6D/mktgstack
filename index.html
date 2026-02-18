@@ -336,12 +336,12 @@
 
     /* ═══ TREATMENTS ═══ */
     const TREATMENTS = [
-      { src: 'compressed_stills/desktop/neon_topaz.jpg',      mobileSrc: 'compressed_stills/mobile/neon_mobile_topaz.jpg',      name: 'neon' },
-      { src: 'compressed_stills/desktop/fuzzy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/fuzzy_mobile_topaz.jpg',     name: 'fuzzy' },
-      { src: 'compressed_stills/desktop/candy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/candy_mobile_topaz.jpg',     name: 'candy' },
-      { src: 'compressed_stills/desktop/balloon_topaz.jpg',   mobileSrc: 'compressed_stills/mobile/balloon_mobile_topaz.jpg',   name: 'balloon' },
-      { src: 'compressed_stills/desktop/metallic_topaz.jpg',  mobileSrc: 'compressed_stills/mobile/metallic_mobile_topaz.jpg',  name: 'metallic' },
-      { src: 'compressed_stills/desktop/chrome_topaz.jpg',    mobileSrc: 'compressed_stills/mobile/chrome_mobile_topaz.jpg',    name: 'chrome' },
+      { src: 'compressed_stills/desktop/neon_topaz.jpg',      mobileSrc: 'compressed_stills/mobile/neon_mobile_topaz.jpg',      name: 'neon',     mobileYOff: -0.08 },
+      { src: 'compressed_stills/desktop/fuzzy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/fuzzy_mobile_topaz.jpg',     name: 'fuzzy',    mobileYOff: -0.06 },
+      { src: 'compressed_stills/desktop/candy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/candy_mobile_topaz.jpg',     name: 'candy',    mobileYOff: -0.07 },
+      { src: 'compressed_stills/desktop/balloon_topaz.jpg',   mobileSrc: 'compressed_stills/mobile/balloon_mobile_topaz.jpg',   name: 'balloon',  mobileYOff: -0.07 },
+      { src: 'compressed_stills/desktop/metallic_topaz.jpg',  mobileSrc: 'compressed_stills/mobile/metallic_mobile_topaz.jpg',  name: 'metallic', mobileYOff: -0.11 },
+      { src: 'compressed_stills/desktop/chrome_topaz.jpg',    mobileSrc: 'compressed_stills/mobile/chrome_mobile_topaz.jpg',    name: 'chrome',   mobileYOff: -0.11 },
     ];
     let currentTreatment = 0;
     let prevTreatment = 0;
@@ -815,9 +815,6 @@
         /* Draw treatment behind the cut-outs */
         mainCtx.globalCompositeOperation = 'destination-over';
 
-        /* ── Mobile treatment offset: shift up to align with logo ── */
-        const MOB_TREATMENT_Y_OFFSET = -0.11; /* fraction of H to shift up (negative = up) */
-
         /* Pick the right image set: mobile 9:16 for portrait, desktop 16:9 for landscape */
         const activeImages = isPortrait ? mobileTreatmentImages : treatmentImages;
 
@@ -829,11 +826,10 @@
           mainCtx.globalAlpha = alpha;
           const c = coverRect(iw, ih, W, H);
           if (isPortrait) {
-            /* Draw at offset position for alignment */
-            const yOff = H * MOB_TREATMENT_Y_OFFSET;
+            /* Per-treatment mobile Y offset */
+            const yOff = H * (TREATMENTS[idx].mobileYOff || 0);
             mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, yOff, W, H);
-            /* Draw again at full size — destination-over means this only
-               shows through in the bottom gap where nothing else is drawn */
+            /* Fill bottom gap via destination-over */
             mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
           } else {
             mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
