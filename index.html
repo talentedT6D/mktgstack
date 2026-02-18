@@ -379,13 +379,20 @@
 
     /* ═══ SIZING ═══ */
     let W, H;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
     function resize() {
       W = document.documentElement.clientWidth;
       H = document.documentElement.clientHeight;
-      dotCanvas.width  = W;  dotCanvas.height  = H;
-      mainCanvas.width = W;  mainCanvas.height = H;
-      blobCanvas.width = W;  blobCanvas.height = H;
-      blurCanvas.width = W;  blurCanvas.height = H;
+      const bW = W * dpr, bH = H * dpr;
+      dotCanvas.width  = bW;  dotCanvas.height  = bH;
+      mainCanvas.width = bW;  mainCanvas.height = bH;
+      blobCanvas.width = bW;  blobCanvas.height = bH;
+      blurCanvas.width = bW;  blurCanvas.height = bH;
+      /* Scale all contexts so drawing code stays in CSS-pixel coords */
+      dotCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      mainCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      blobCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      blurCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       buildDotPattern();
       prepareWhiteLogo();
     }
@@ -767,11 +774,12 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          const c = coverRect(logoCanvas.width, logoCanvas.height, W, H);
-          const bw = W * DESK_LOGO_SCALE, bh = H * DESK_LOGO_SCALE;
-          const bx = (W - bw) / 2;
-          const by = (H - bh) / 2;
-          mainCtx.drawImage(logoCanvas, c.sx, c.sy, c.sw, c.sh, bx, by, bw, bh);
+          /* Contain-fit the full logo within DESK_LOGO_SCALE of the viewport — no cropping */
+          const maxW = W * DESK_LOGO_SCALE, maxH = H * DESK_LOGO_SCALE;
+          const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
+          const bx = (W - fit.dw) / 2;
+          const by = (H - fit.dh) / 2;
+          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
         }
         mainCtx.globalCompositeOperation = 'source-over';
       }
@@ -805,12 +813,12 @@
         /* Blur + liquid distort */
         blurCtx.clearRect(0, 0, W, H);
         blurCtx.filter = 'url(#liquid-distort) blur(14px)';
-        blurCtx.drawImage(blobCanvas, 0, 0);
+        blurCtx.drawImage(blobCanvas, 0, 0, blobCanvas.width, blobCanvas.height, 0, 0, W, H);
         blurCtx.filter = 'none';
 
         /* Cut out blob shapes */
         mainCtx.globalCompositeOperation = 'destination-out';
-        mainCtx.drawImage(blurCanvas, 0, 0);
+        mainCtx.drawImage(blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, 0, 0, W, H);
 
         /* Draw treatment behind the cut-outs */
         mainCtx.globalCompositeOperation = 'destination-over';
@@ -828,9 +836,17 @@
           if (isPortrait) {
             /* Per-treatment mobile Y offset */
             const yOff = H * (TREATMENTS[idx].mobileYOff || 0);
+            /* Primary draw: shifted up to align logo */
             mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, yOff, W, H);
-            /* Fill bottom gap via destination-over */
-            mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
+            /* Fill only the bottom gap (below the primary draw) — clip to prevent ghost logo */
+            if (yOff < 0) {
+              mainCtx.save();
+              mainCtx.beginPath();
+              mainCtx.rect(0, H + yOff, W, -yOff);
+              mainCtx.clip();
+              mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
+              mainCtx.restore();
+            }
           } else {
             mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
           }
