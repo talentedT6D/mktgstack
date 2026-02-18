@@ -6,6 +6,9 @@
   <title>MKTG STACK</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -153,21 +156,22 @@
     .mobile-ui a, .mobile-ui button { pointer-events: auto; }
 
     .mobile-wordmark {
-      position: absolute; bottom: 205px; right: 32px;
+      position: absolute; bottom: 185px; right: 32px;
       height: 36px; width: auto;
     }
     .mobile-tagline {
-      position: absolute; bottom: 150px; right: 32px;
+      position: absolute; bottom: 128px; right: 32px;
       text-align: right;
       color: rgba(255, 255, 255, 0.85);
-      font-family: 'Arial', 'Helvetica Neue', sans-serif;
+      font-family: 'Rethink Sans', 'Arial', sans-serif;
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 1.25;
       font-weight: 400;
-      max-width: 280px;
+      max-width: none;
+      white-space: nowrap;
     }
     .mobile-social {
-      position: absolute; bottom: 78px; right: 32px;
+      position: absolute; bottom: 62px; right: 32px;
       display: flex; gap: 12px; align-items: center;
     }
     .mobile-social a {
@@ -177,7 +181,7 @@
     .mobile-social a:hover { transform: scale(1.08); }
     .mobile-social a img { height: 48px; width: auto; }
     .mobile-shuffle {
-      position: absolute; bottom: 72px; left: 28px;
+      position: absolute; bottom: 62px; left: 28px;
       background: none; border: none; padding: 0;
       cursor: pointer;
       transition: transform 0.15s ease;
@@ -218,22 +222,22 @@
     }
 
     @media (max-width: 480px) {
-      .mobile-wordmark { bottom: 192px; right: 24px; height: 32px; }
-      .mobile-tagline { bottom: 140px; right: 24px; font-size: 14px; max-width: 240px; }
-      .mobile-social { bottom: 66px; right: 24px; gap: 10px; }
+      .mobile-wordmark { bottom: 172px; right: 24px; height: 32px; }
+      .mobile-tagline { bottom: 118px; right: 24px; font-size: 14px; }
+      .mobile-social { bottom: 56px; right: 24px; gap: 10px; }
       .mobile-social a img { height: 44px; }
-      .mobile-shuffle { bottom: 60px; left: 24px; }
+      .mobile-shuffle { bottom: 50px; left: 24px; }
       .mobile-shuffle img { height: 50px; }
       .sticker-stamp { width: 140px; }
       .sticker-cursor { width: 140px; }
     }
 
     @media (max-width: 360px) {
-      .mobile-wordmark { bottom: 178px; right: 20px; height: 28px; }
-      .mobile-tagline { bottom: 128px; right: 20px; font-size: 13px; max-width: 210px; }
-      .mobile-social { bottom: 60px; right: 20px; gap: 8px; }
+      .mobile-wordmark { bottom: 158px; right: 20px; height: 28px; }
+      .mobile-tagline { bottom: 108px; right: 20px; font-size: 13px; }
+      .mobile-social { bottom: 50px; right: 20px; gap: 8px; }
       .mobile-social a img { height: 40px; }
-      .mobile-shuffle { bottom: 54px; left: 20px; }
+      .mobile-shuffle { bottom: 44px; left: 20px; }
       .mobile-shuffle img { height: 46px; }
       .sticker-stamp { width: 120px; }
     }
@@ -324,7 +328,7 @@
   <!-- Mobile UI (hidden on desktop, shown on <=768px) -->
   <div class="mobile-ui" id="mobile-ui">
     <img class="mobile-wordmark" src="iconsMob/Asset 11.png" alt="talented (grid of companies)" />
-    <p class="mobile-tagline">The answer to every marketing problem isn't an advertising campaign.</p>
+    <p class="mobile-tagline">The answer to every marketing problem<br>isn't an advertising campaign.</p>
     <div class="mobile-social">
       <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn">
         <img src="iconsMob/Asset 9.png" alt="LinkedIn" draggable="false" />
