@@ -247,12 +247,6 @@
     .desktop-manifesto-back:hover { transform: scale(1.1); }
     .desktop-manifesto-back:active { transform: scale(0.9); }
     .desktop-manifesto-back svg { display: block; }
-    .desktop-sayhi {
-      position: absolute; bottom: 49px; right: 62px;
-      opacity: 0; transition: opacity 0.3s 0.3s;
-      pointer-events: none; z-index: 6;
-    }
-    .desktop-sayhi img { height: 36px; width: auto; }
 
     /* ── Desktop manifesto active ── */
     #ui-overlay.desktop-manifesto-mode .desktop-tagline-btn {
@@ -266,9 +260,6 @@
     }
     #ui-overlay.desktop-manifesto-mode .shuffle-btn {
       opacity: 0; pointer-events: none;
-    }
-    #ui-overlay.desktop-manifesto-mode .desktop-sayhi {
-      opacity: 1; pointer-events: auto;
     }
 
     /* Tablet */
@@ -285,7 +276,6 @@
       .desktop-tagline-btn { display: none; }
       .desktop-manifesto-text { display: none; }
       .desktop-manifesto-back { display: none; }
-      .desktop-sayhi { display: none; }
       .mobile-ui { display: block; }
       .sticker-stamp { width: 200px; }
       .sticker-cursor { width: 200px; }
@@ -477,9 +467,6 @@
     <button class="desktop-manifesto-back" id="desktop-manifesto-back-btn" aria-label="Back">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <div class="desktop-sayhi">
-      <img src="iconsDesktop/sayhi.svg" alt="Say hi..." draggable="false" />
-    </div>
   </div>
 
   <!-- Mobile UI (hidden on desktop, shown on <=768px) -->
