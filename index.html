@@ -44,24 +44,25 @@
     /* ── Social icons (top-left) ── */
     .social-icons {
       position: absolute; top: 53px; left: 62px;
-      display: flex; gap: 10px; align-items: center;
     }
-    .social-icons a {
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none;
-      transition: transform 0.2s ease;
+    .desktop-social-bar {
+      position: relative; display: inline-block;
     }
-    .social-icons a:hover { transform: scale(1.08); }
-    .social-icons a img {
-      height: 56px; width: auto;
+    .desktop-social-bar img {
+      height: 36px; width: auto; display: block;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
-    /* no inversion — icons stay yellow */
+    .desktop-social-link {
+      position: absolute; top: 0; bottom: 0;
+      display: block;
+    }
 
     /* ── Grid wordmark (top-right) ── */
     .grid-wordmark {
       position: absolute; top: 48px; right: 62px;
       height: 58px; width: auto;
       transition: filter 0.3s ease;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
     /* no inversion — wordmark stays yellow */
 
@@ -70,12 +71,13 @@
       position: absolute; bottom: 49px; left: 62px;
       background: none; border: none; padding: 0;
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, opacity 0.3s ease;
     }
     .shuffle-btn:hover { transform: scale(1.08); }
     .shuffle-btn:active { transform: scale(0.92); }
     .shuffle-btn img {
       height: 56px; width: auto;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
     /* no inversion — shuffle stays yellow */
     .shuffle-btn.shuffling { animation: shufflePop 0.4s ease; }
@@ -156,52 +158,115 @@
     .mobile-ui a, .mobile-ui button { pointer-events: auto; }
 
     .mobile-wordmark {
-      position: absolute; bottom: 185px; right: 32px;
-      height: 36px; width: auto;
+      position: absolute; top: calc(14% - 7px); left: 50%;
+      transform: translateX(-50%);
+      height: 46px; width: auto;
+      transition: opacity 0.3s;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
-    .mobile-tagline {
-      position: absolute; bottom: 128px; right: 32px;
-      text-align: right;
-      color: #FAFF40;
-      font-family: 'Rethink Sans', 'Arial', sans-serif;
-      font-size: 15px;
-      line-height: 1.25;
-      font-weight: 700;
-      max-width: none;
-      white-space: nowrap;
+    .mobile-tagline-btn {
+      position: absolute; top: calc(53.5% + 50px); left: 50%;
+      transform: translateX(-50%);
+      background: none; border: none; padding: 0; cursor: pointer;
+      width: 82%; max-width: 295px;
+    }
+    .mobile-tagline-btn img {
+      display: block; width: 100%; height: auto;
     }
     .mobile-social {
-      position: absolute; bottom: 62px; right: 32px;
-      display: flex; gap: 12px; align-items: center;
+      position: absolute; bottom: 7%; right: 24px;
     }
-    .mobile-social a {
-      display: flex; text-decoration: none;
-      transition: transform 0.2s ease;
+    .mobile-social-wrap {
+      position: relative; display: inline-block;
     }
-    .mobile-social a:hover { transform: scale(1.08); }
-    .mobile-social a img { height: 48px; width: auto; }
+    .mobile-social-wrap img {
+      display: block; height: 28px; width: auto;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
+    .mobile-social-link {
+      position: absolute; top: 0; bottom: 0;
+      text-decoration: none;
+    }
     .mobile-shuffle {
-      position: absolute; bottom: 62px; left: 28px;
+      position: absolute; bottom: 7%; left: 28px;
       background: none; border: none; padding: 0;
       cursor: pointer;
       transition: transform 0.15s ease;
     }
     .mobile-shuffle:active { transform: scale(0.92); }
-    .mobile-shuffle img { height: 56px; width: auto; }
+    .mobile-shuffle img {
+      height: 34px; width: auto;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
     .mobile-shuffle.shuffling { animation: shufflePop 0.4s ease; }
 
     /* ── Mobile responsive ── */
 
     /* ── Desktop tagline below logo ── */
-    .desktop-tagline {
+    .desktop-tagline-btn {
       position: absolute;
       bottom: 67px;
       left: 50%;
       transform: translate(-50%, 50%);
       width: 28.8%;
       max-width: 416px;
-      pointer-events: none;
       z-index: 4;
+      background: none; border: none; padding: 0; cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    .desktop-tagline-btn img {
+      width: 100%; height: auto; display: block;
+      pointer-events: none;
+    }
+
+    /* ── Desktop manifesto mode elements ── */
+    .desktop-manifesto-text {
+      position: absolute;
+      top: calc(12% + 75px); right: 62px; bottom: 12%;
+      width: 42%;
+      display: flex; align-items: flex-start; justify-content: flex-start;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+      pointer-events: none; z-index: 1;
+    }
+    .desktop-manifesto-text img {
+      width: 100%; height: 100%;
+      object-fit: contain; object-position: top left;
+    }
+    .desktop-manifesto-back {
+      position: absolute; bottom: 49px; left: 62px;
+      background: none; border: none; padding: 4px;
+      cursor: pointer; opacity: 0;
+      transition: opacity 0.3s 0.3s;
+      pointer-events: none; z-index: 6;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
+    .desktop-manifesto-back:hover { transform: scale(1.1); }
+    .desktop-manifesto-back:active { transform: scale(0.9); }
+    .desktop-manifesto-back svg { display: block; }
+    .desktop-sayhi {
+      position: absolute; bottom: 49px; right: 62px;
+      opacity: 0; transition: opacity 0.3s 0.3s;
+      pointer-events: none; z-index: 6;
+    }
+    .desktop-sayhi img { height: 36px; width: auto; }
+
+    /* ── Desktop manifesto active ── */
+    #ui-overlay.desktop-manifesto-mode .desktop-tagline-btn {
+      opacity: 0; pointer-events: none;
+    }
+    #ui-overlay.desktop-manifesto-mode .desktop-manifesto-text {
+      opacity: 1; transform: translateY(0); pointer-events: auto;
+    }
+    #ui-overlay.desktop-manifesto-mode .desktop-manifesto-back {
+      opacity: 1; pointer-events: auto;
+    }
+    #ui-overlay.desktop-manifesto-mode .shuffle-btn {
+      opacity: 0; pointer-events: none;
+    }
+    #ui-overlay.desktop-manifesto-mode .desktop-sayhi {
+      opacity: 1; pointer-events: auto;
     }
 
     /* Tablet */
@@ -215,30 +280,29 @@
       .social-icons { display: none; }
       .grid-wordmark { display: none; }
       .shuffle-btn { display: none; }
-      .desktop-tagline { display: none; }
+      .desktop-tagline-btn { display: none; }
+      .desktop-manifesto-text { display: none; }
+      .desktop-manifesto-back { display: none; }
+      .desktop-sayhi { display: none; }
       .mobile-ui { display: block; }
       .sticker-stamp { width: 200px; }
       .sticker-cursor { width: 200px; }
     }
 
     @media (max-width: 480px) {
-      .mobile-wordmark { bottom: 172px; right: 24px; height: 32px; }
-      .mobile-tagline { bottom: 118px; right: 24px; font-size: 14px; }
-      .mobile-social { bottom: 56px; right: 24px; gap: 10px; }
-      .mobile-social a img { height: 44px; }
-      .mobile-shuffle { bottom: 50px; left: 24px; }
-      .mobile-shuffle img { height: 50px; }
+      .mobile-wordmark { height: 38px; }
+      .mobile-tagline-btn { width: 86%; }
+      .mobile-social-wrap img { height: 24px; }
+      .mobile-shuffle img { height: 30px; }
       .sticker-stamp { width: 140px; }
       .sticker-cursor { width: 140px; }
     }
 
     @media (max-width: 360px) {
-      .mobile-wordmark { bottom: 158px; right: 20px; height: 28px; }
-      .mobile-tagline { bottom: 108px; right: 20px; font-size: 13px; }
-      .mobile-social { bottom: 50px; right: 20px; gap: 8px; }
-      .mobile-social a img { height: 40px; }
-      .mobile-shuffle { bottom: 44px; left: 20px; }
-      .mobile-shuffle img { height: 46px; }
+      .mobile-wordmark { height: 32px; }
+      .mobile-tagline-btn { width: 88%; }
+      .mobile-social-wrap img { height: 22px; }
+      .mobile-shuffle img { height: 28px; }
       .sticker-stamp { width: 120px; }
     }
 
@@ -253,6 +317,86 @@
     @media (hover: none) {
       .sticker-cursor { display: none !important; }
       body.sticker-mode { cursor: auto; }
+    }
+
+
+    /* ── Manifesto flex layout ── */
+    .manifesto-layout {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+      padding-left: 24px; padding-right: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s 0.2s;
+      z-index: 3;
+    }
+    .manifesto-header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+    }
+    .manifesto-back {
+      background: none; border: none; padding: 6px;
+      cursor: pointer; min-width: 44px; min-height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
+    .manifesto-back:active { transform: scale(0.9); }
+    .manifesto-back svg { display: block; }
+    .manifesto-header-wordmark {
+      height: clamp(32px, 5vw, 42px); width: auto;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
+    .manifesto-logo-space {
+      flex-shrink: 0;
+      height: clamp(100px, 24vh, 180px);
+    }
+    .manifesto-body {
+      flex: 1; min-height: 0;
+      display: flex; justify-content: center;
+      padding: 10px 4px;
+      overflow: hidden;
+    }
+    .manifesto-body img {
+      width: 62%; height: 100%;
+      object-fit: contain; object-position: top center;
+    }
+    .manifesto-footer {
+      flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px;
+      padding-top: 16px;
+    }
+    .manifesto-footer-social .mobile-social-wrap img {
+      height: 24px;
+    }
+
+    /* Tagline + social + shuffle transitions */
+    .mobile-tagline-btn { transition: opacity 0.3s; }
+    .mobile-social { transition: opacity 0.3s; }
+    .mobile-shuffle { transition: opacity 0.3s; }
+
+    /* Disable tagline click in sticker mode */
+    body.sticker-mode .mobile-tagline-btn { pointer-events: none; }
+    body.sticker-mode .desktop-tagline-btn { pointer-events: none; }
+
+    /* ── When manifesto is active ── */
+    .mobile-ui.manifesto-mode .mobile-tagline-btn {
+      opacity: 0; pointer-events: none;
+    }
+    .mobile-ui.manifesto-mode .mobile-wordmark {
+      opacity: 0; pointer-events: none;
+    }
+    .mobile-ui.manifesto-mode .mobile-shuffle {
+      opacity: 0; pointer-events: none;
+    }
+    .mobile-ui.manifesto-mode .mobile-social {
+      opacity: 0; pointer-events: none;
+    }
+    .mobile-ui.manifesto-mode .manifesto-layout {
+      opacity: 1; pointer-events: auto;
     }
 
     /* ── Loading ── */
@@ -302,47 +446,88 @@
 
   <div id="ui-overlay" class="layer">
     <div class="social-icons" id="social-icons">
-      <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <img src="iconsDesktop/Asset 14.png" alt="LinkedIn" draggable="false" />
-      </a>
-      <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X">
-        <img src="iconsDesktop/Asset 13.png" alt="X" draggable="false" />
-      </a>
-      <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram">
-        <img src="iconsDesktop/Asset 12.png" alt="Instagram" draggable="false" />
-      </a>
+      <div class="desktop-social-bar">
+        <img src="iconsDesktop/social.svg" alt="Social links" draggable="false" />
+        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="desktop-social-link" style="left:0;width:22%"></a>
+        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="desktop-social-link" style="left:22%;width:26%"></a>
+        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="desktop-social-link" style="left:52%;width:24%"></a>
+        <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="desktop-social-link" style="left:78%;width:22%"></a>
+      </div>
     </div>
 
     <!-- Grid wordmark — top-right -->
-    <img class="grid-wordmark" id="grid-wordmark" src="iconsDesktop/Asset 16.png" alt="talented (grid of companies)" />
+    <img class="grid-wordmark" id="grid-wordmark" src="iconsDesktop/grid-wordmark.svg" alt="talented (grid of companies)" />
 
     <button class="shuffle-btn" id="shuffle-btn" aria-label="Shuffle treatment">
-      <img src="iconsDesktop/Asset 15.png" alt="Shuffle" draggable="false" />
+      <img src="iconsDesktop/shuffle.svg" alt="Shuffle" draggable="false" />
     </button>
 
     <div class="treatment-label" id="treatment-label">fuzzy</div>
 
-    <img class="desktop-tagline" src="Asset 7.png" alt="The answer to every marketing problem isn't an advertising campaign." draggable="false" />
+    <button class="desktop-tagline-btn" id="desktop-tagline-btn" aria-label="Read manifesto">
+      <img src="Asset 7.png" alt="The answer to every marketing problem isn't an advertising campaign." draggable="false" />
+    </button>
+
+    <!-- Desktop manifesto text (fades in on right side of logo) -->
+    <div class="desktop-manifesto-text" id="desktop-manifesto-text">
+      <img src="iconsDesktop/manifesto-text.svg" alt="Manifesto" draggable="false" />
+    </div>
+    <button class="desktop-manifesto-back" id="desktop-manifesto-back-btn" aria-label="Back">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="desktop-sayhi">
+      <img src="iconsDesktop/sayhi.svg" alt="Say hi..." draggable="false" />
+    </div>
   </div>
 
   <!-- Mobile UI (hidden on desktop, shown on <=768px) -->
   <div class="mobile-ui" id="mobile-ui">
-    <img class="mobile-wordmark" src="iconsMob/Asset 11.png" alt="talented (grid of companies)" />
-    <p class="mobile-tagline">The answer to every marketing problem<br>isn't an advertising campaign.</p>
+    <!-- Normal mode elements (absolute positioned) -->
+    <img class="mobile-wordmark" src="iconsMob/Asset 8.svg" alt="talented (grid of companies)" draggable="false" />
+    <button class="mobile-tagline-btn" id="mobile-tagline-btn" aria-label="Read more">
+      <img src="iconsMob/Asset 7.svg" alt="The answer to every marketing problem isn't an advertising campaign." draggable="false" />
+    </button>
     <div class="mobile-social">
-      <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <img src="iconsMob/Asset 9.png" alt="LinkedIn" draggable="false" />
-      </a>
-      <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X">
-        <img src="iconsMob/Asset 8.png" alt="X" draggable="false" />
-      </a>
-      <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram">
-        <img src="iconsMob/Asset 7.png" alt="Instagram" draggable="false" />
-      </a>
+      <div class="mobile-social-wrap">
+        <img src="iconsMob/Asset 10.svg" alt="Social links" draggable="false" />
+        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:22%"></a>
+        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:22%;width:26%"></a>
+        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:52%;width:24%"></a>
+        <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="mobile-social-link" style="left:78%;width:22%"></a>
+      </div>
     </div>
     <button class="mobile-shuffle" id="mobile-shuffle-btn" aria-label="Shuffle treatment">
-      <img src="iconsMob/Asset 10.png" alt="Shuffle" draggable="false" />
+      <img src="iconsMob/Asset 9.svg" alt="Shuffle" draggable="false" />
     </button>
+
+    <!-- Manifesto layout (flex column, shown in manifesto-mode) -->
+    <div class="manifesto-layout" id="manifesto-layout">
+      <!-- Header row -->
+      <div class="manifesto-header">
+        <button class="manifesto-back" id="manifesto-back-btn" aria-label="Back">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <img class="manifesto-header-wordmark" src="iconsMob/Asset 8.svg" alt="talented (grid of companies)" draggable="false" />
+      </div>
+      <!-- Logo breathing space (canvas shows through) -->
+      <div class="manifesto-logo-space"></div>
+      <!-- Body text -->
+      <div class="manifesto-body">
+        <img src="iconsMob/manifesto.svg" alt="Manifesto" draggable="false" />
+      </div>
+      <!-- Footer -->
+      <div class="manifesto-footer">
+        <div class="manifesto-footer-social">
+          <div class="mobile-social-wrap">
+            <img src="iconsMob/Asset 10.svg" alt="Social links" draggable="false" />
+            <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:22%"></a>
+            <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:22%;width:26%"></a>
+            <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:52%;width:24%"></a>
+            <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="mobile-social-link" style="left:78%;width:22%"></a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Sticker cursor preview + placement layer -->
@@ -355,13 +540,45 @@
 
     /* ═══ TREATMENTS ═══ */
     const TREATMENTS = [
-      { src: 'compressed_stills/desktop/neon_topaz.jpg',      mobileSrc: 'compressed_stills/mobile/neon_mobile_topaz.jpg',      name: 'neon',     mobileYOff: -0.11 },
-      { src: 'compressed_stills/desktop/fuzzy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/fuzzy_mobile_topaz.jpg',     name: 'fuzzy',    mobileYOff: -0.11 },
-      { src: 'compressed_stills/desktop/candy_topaz.jpg',     mobileSrc: 'compressed_stills/mobile/candy_mobile_topaz.jpg',     name: 'candy',    mobileYOff: -0.11 },
-      { src: 'compressed_stills/desktop/balloon_topaz.jpg',   mobileSrc: 'compressed_stills/mobile/balloon_mobile_topaz.jpg',   name: 'balloon',  mobileYOff: -0.11 },
-      { src: 'compressed_stills/desktop/metallic_topaz.jpg',  mobileSrc: 'compressed_stills/mobile/metallic_mobile_topaz.jpg',  name: 'metallic', mobileYOff: -0.11 },
-      { src: 'compressed_stills/desktop/chrome_topaz.jpg',    mobileSrc: 'compressed_stills/mobile/chrome_mobile_topaz.jpg',    name: 'chrome',   mobileYOff: -0.11 },
+      {
+        src: 'compressed_stills/desktop/neon_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/neon_mobile_topaz.jpg',
+        name: 'neon',
+        mobileYOff: -0.11,
+      },
+      {
+        src: 'compressed_stills/desktop/candy_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/candy_mobile_topaz.jpg',
+        name: 'candy',
+        mobileYOff: -0.11,
+        desktopAlign: { zoom: 0.9622, xOff: 0.00308, yOff: 0.00036 },
+      },
+      {
+        src: 'compressed_stills/desktop/fuzzy_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/fuzzy_mobile_topaz.jpg',
+        name: 'fuzzy',
+        mobileYOff: -0.11,
+      },
+      {
+        src: 'compressed_stills/desktop/balloon_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/balloon_mobile_topaz.jpg',
+        name: 'balloon',
+        mobileYOff: -0.11,
+      },
+      {
+        src: 'compressed_stills/desktop/metallic_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/metallic_mobile_topaz.jpg',
+        name: 'metallic',
+        mobileYOff: -0.11,
+      },
+      {
+        src: 'compressed_stills/desktop/chrome_topaz.jpg',
+        mobileSrc: 'compressed_stills/mobile/chrome_mobile_topaz.jpg',
+        name: 'chrome',
+        mobileYOff: -0.11,
+      },
     ];
+    const DESKTOP_BASE_ASPECT = 16 / 9;
     let currentTreatment = 0;
     let prevTreatment = 0;
     let lastTreatmentSwitch = 0;
@@ -535,6 +752,59 @@
       mobileShuffleEl.addEventListener('click', () => toggleStickerMode(mobileShuffleEl));
     }
 
+    /* ── Manifesto mode (in-page transition) ── */
+    let manifestoMode = false;
+    /* Mobile logo animation targets — lerped each frame in the render loop */
+    let mobLogoScale = 1.12, mobLogoScaleTarget = 1.12;
+    let mobLogoYPos  = 0.39, mobLogoYPosTarget  = 0.39;
+    const MANIFESTO_LOGO_SCALE = 0.55;
+    const MANIFESTO_LOGO_YPOS  = 0.19;
+    /* Desktop logo animation targets */
+    let deskLogoScale = 0.525, deskLogoScaleTarget = 0.525;
+    let deskLogoYPos  = 0.5,   deskLogoYPosTarget  = 0.5;
+    let deskLogoXPos  = 0.5,   deskLogoXPosTarget  = 0.5;
+    const DESK_MANIFESTO_LOGO_SCALE = 0.38;
+    const DESK_MANIFESTO_LOGO_YPOS  = 0.5;
+    const DESK_MANIFESTO_LOGO_XPOS  = 0.28;
+    const LOGO_LERP = 0.08;
+
+    const mobileUI              = document.getElementById('mobile-ui');
+    const uiOverlay             = document.getElementById('ui-overlay');
+    const taglineBtn            = document.getElementById('mobile-tagline-btn');
+    const manifestoBackBtn      = document.getElementById('manifesto-back-btn');
+    const desktopTaglineBtn     = document.getElementById('desktop-tagline-btn');
+    const desktopManifestoBack  = document.getElementById('desktop-manifesto-back-btn');
+
+    function enterManifesto() {
+      manifestoMode = true;
+      /* Mobile */
+      mobLogoScaleTarget = MANIFESTO_LOGO_SCALE;
+      mobLogoYPosTarget  = MANIFESTO_LOGO_YPOS;
+      mobileUI.classList.add('manifesto-mode');
+      /* Desktop — logo moves left, text fades in on right */
+      deskLogoScaleTarget = DESK_MANIFESTO_LOGO_SCALE;
+      deskLogoYPosTarget  = DESK_MANIFESTO_LOGO_YPOS;
+      deskLogoXPosTarget  = DESK_MANIFESTO_LOGO_XPOS;
+      uiOverlay.classList.add('desktop-manifesto-mode');
+    }
+    function exitManifesto() {
+      manifestoMode = false;
+      /* Mobile */
+      mobLogoScaleTarget = 1.12;
+      mobLogoYPosTarget  = 0.39;
+      mobileUI.classList.remove('manifesto-mode');
+      /* Desktop */
+      deskLogoScaleTarget = 0.525;
+      deskLogoYPosTarget  = 0.5;
+      deskLogoXPosTarget  = 0.5;
+      uiOverlay.classList.remove('desktop-manifesto-mode');
+    }
+
+    if (taglineBtn)            taglineBtn.addEventListener('click', enterManifesto);
+    if (manifestoBackBtn)      manifestoBackBtn.addEventListener('click', exitManifesto);
+    if (desktopTaglineBtn)     desktopTaglineBtn.addEventListener('click', enterManifesto);
+    if (desktopManifestoBack)  desktopManifestoBack.addEventListener('click', exitManifesto);
+
     /* Pop sound via Web Audio API */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playPop() {
@@ -624,6 +894,33 @@
       const dw = cw;
       const dh = ih * scale;
       return { dx: 0, dy: (ch - dh) / 2, dw, dh };
+    }
+
+    function desktopTreatmentRect(iw, ih, cw, ch, align) {
+      const base = coverRect(iw, ih, cw, ch);
+      const a = align || {};
+
+      /* Normalize slight source AR drift so mixed source sizes align consistently. */
+      const srcAR = iw / ih;
+      const arZoom = Math.max(0.92, Math.min(1.08, DESKTOP_BASE_ASPECT / srcAR));
+      const requestedZoom = Math.max(0.75, Math.min(1.25, (a.zoom || 1) * arZoom));
+      const minZoom = Math.max(base.sw / iw, base.sh / ih);
+      const zoom = Math.max(minZoom, requestedZoom);
+
+      let sw = base.sw / zoom;
+      let sh = base.sh / zoom;
+      let sx = base.sx - (sw - base.sw) / 2;
+      let sy = base.sy - (sh - base.sh) / 2;
+
+      const xPx = (a.xOff || 0) * cw;
+      const yPx = (a.yOff || 0) * ch;
+      sx -= xPx * (sw / cw);
+      sy -= yPx * (sh / ch);
+
+      sx = Math.max(0, Math.min(iw - sw, sx));
+      sy = Math.max(0, Math.min(ih - sh, sy));
+
+      return { sx, sy, sw, sh };
     }
 
     /* ═══ FLOWING LIQUID BLOB — big, organic, ribbon-like ═══ */
@@ -746,6 +1043,8 @@
       const angle = Math.atan2(vy, vx);
 
       /* ── Alpha fade ── */
+      /* Disable blob reveal in manifesto mode */
+      if (manifestoMode) { targetAlpha = 0; curAlpha = 0; trail.length = 0; }
       curAlpha += (targetAlpha - curAlpha) * 0.04; /* slower fade = more presence */
 
       /* ── Trail — denser, longer-lived ── */
@@ -777,11 +1076,15 @@
 
       /* 2. Draw white logo — ALWAYS visible in both modes */
       const isPortrait = H > W;
-      /* ── Mobile logo tuning ── */
-      const MOB_LOGO_W_SCALE = 1.12;  /* horizontal width scale (wider to match treatments) */
-      const MOB_LOGO_Y_POS   = 0.39;  /* vertical center position (0=top, 0.5=middle) */
-      /* ── Desktop logo tuning ── */
-      const DESK_LOGO_SCALE  = 0.7;
+      /* ── Mobile logo tuning (lerp toward target each frame) ── */
+      mobLogoScale += (mobLogoScaleTarget - mobLogoScale) * LOGO_LERP;
+      mobLogoYPos  += (mobLogoYPosTarget  - mobLogoYPos)  * LOGO_LERP;
+      const MOB_LOGO_W_SCALE = mobLogoScale;
+      const MOB_LOGO_Y_POS   = mobLogoYPos;
+      /* ── Desktop logo tuning (lerp toward target each frame) ── */
+      deskLogoScale += (deskLogoScaleTarget - deskLogoScale) * LOGO_LERP;
+      deskLogoYPos  += (deskLogoYPosTarget  - deskLogoYPos)  * LOGO_LERP;
+      deskLogoXPos  += (deskLogoXPosTarget  - deskLogoXPos)  * LOGO_LERP;
       if (logoCanvas.width > 1) {
         mainCtx.globalCompositeOperation = 'screen';
         if (isPortrait) {
@@ -793,17 +1096,17 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          const maxW = W * DESK_LOGO_SCALE, maxH = H * DESK_LOGO_SCALE;
+          const maxW = W * deskLogoScale, maxH = H * deskLogoScale;
           const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
-          const bx = (W - fit.dw) / 2;
-          const by = (H - fit.dh) / 2;
+          const bx = W * deskLogoXPos - fit.dw / 2;
+          const by = H * deskLogoYPos - fit.dh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
         }
         mainCtx.globalCompositeOperation = 'source-over';
       }
 
-      /* 3-4. Blob reveal + treatments — only in reveal mode */
-      if (!stickerMode) {
+      /* 3-4. Blob reveal + treatments — only in reveal mode (skip in manifesto) */
+      if (!stickerMode && !manifestoMode) {
         /* BLOB MASK */
         blobCtx.clearRect(0, 0, W, H);
 
@@ -866,7 +1169,8 @@
               mainCtx.restore();
             }
           } else {
-            mainCtx.drawImage(img, c.sx, c.sy, c.sw, c.sh, 0, 0, W, H);
+            const d = desktopTreatmentRect(iw, ih, W, H, TREATMENTS[idx].desktopAlign);
+            mainCtx.drawImage(img, d.sx, d.sy, d.sw, d.sh, 0, 0, W, H);
           }
         }
 
