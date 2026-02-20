@@ -1085,10 +1085,12 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          /* Correct for cover-crop zoom drift at non-16:9 viewports.
-             Compare treatment crop at current AR vs. reference 16:9 AR —
-             the ratio tells us exactly how much extra zoom the cover-crop
-             applies, so the overlay logo tracks the baked-in one. */
+          /* Scale the overlay to match the treatment's cover-crop zoom.
+             containRect can't be used here — it switches between width-
+             and height-constrained modes at different ARs, causing the
+             overlay to track the wrong dimension.  Instead, compute the
+             overlay width directly from the treatment crop ratio so it
+             always scales with W (same as the baked-in logo). */
           const tImg = treatmentImages[currentTreatment];
           const tw = tImg ? (tImg.naturalWidth  || 2752) : 2752;
           const th = tImg ? (tImg.naturalHeight || 1536) : 1536;
@@ -1098,11 +1100,11 @@
           const dRef = desktopTreatmentRect(tw, th, refW, H, align);
           const cropCorrection = dRef.sw / dCur.sw;
           const adjScale = deskLogoScale * cropCorrection;
-          const maxW = W * adjScale, maxH = H * adjScale;
-          const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
-          const bx = W * deskLogoXPos - fit.dw / 2;
-          const by = H * deskLogoYPos - fit.dh / 2;
-          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
+          const lw = adjScale * W;
+          const lh = lw * logoCanvas.height / logoCanvas.width;
+          const bx = W * deskLogoXPos - lw / 2;
+          const by = H * deskLogoYPos - lh / 2;
+          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, lw, lh);
         }
         mainCtx.globalCompositeOperation = 'source-over';
       }
