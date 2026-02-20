@@ -1085,7 +1085,11 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          const maxW = W * deskLogoScale, maxH = H * deskLogoScale;
+          /* Match cover-crop zoom: when viewport is narrower than 16:9,
+             the treatment zooms in extra — the logo overlay must track that */
+          const coverZoom = Math.max(1, DESKTOP_BASE_ASPECT / (W / H));
+          const adjScale = deskLogoScale * coverZoom;
+          const maxW = W * adjScale, maxH = H * adjScale;
           const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
           const bx = W * deskLogoXPos - fit.dw / 2;
           const by = H * deskLogoYPos - fit.dh / 2;
