@@ -1085,18 +1085,27 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          /* Match cover-crop zoom: when viewport is narrower than the
-             treatment source AR, the cover-crop zooms in — track that */
-          const tImg = treatmentImages[currentTreatment];
-          const srcAR = (tImg && tImg.naturalWidth && tImg.naturalHeight)
-            ? tImg.naturalWidth / tImg.naturalHeight : DESKTOP_BASE_ASPECT;
-          const coverZoom = Math.max(1, srcAR / (W / H));
-          const adjScale = deskLogoScale * coverZoom;
-          const maxW = W * adjScale, maxH = H * adjScale;
-          const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
-          const bx = W * deskLogoXPos - fit.dw / 2;
-          const by = H * deskLogoYPos - fit.dh / 2;
-          mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
+          if (!manifestoMode) {
+            /* Exact crop-aligned draw — apply the same crop transform as
+               the treatment so the overlay is perfectly superimposed */
+            const tImg = treatmentImages[currentTreatment];
+            const tw = tImg ? (tImg.naturalWidth  || 2752) : 2752;
+            const th = tImg ? (tImg.naturalHeight || 1536) : 1536;
+            const d = desktopTreatmentRect(tw, th, W, H, TREATMENTS[currentTreatment].desktopAlign);
+            /* logo canvas is treatment source scaled down — map crop to logo coords */
+            const rx = tw / logoCanvas.width;
+            const ry = th / logoCanvas.height;
+            mainCtx.drawImage(logoCanvas,
+              d.sx / rx, d.sy / ry, d.sw / rx, d.sh / ry,
+              0, 0, W, H);
+          } else {
+            /* Manifesto: lerp-based positioning (treatments not visible) */
+            const maxW = W * deskLogoScale, maxH = H * deskLogoScale;
+            const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
+            const bx = W * deskLogoXPos - fit.dw / 2;
+            const by = H * deskLogoYPos - fit.dh / 2;
+            mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, fit.dw, fit.dh);
+          }
         }
         mainCtx.globalCompositeOperation = 'source-over';
       }
