@@ -44,9 +44,20 @@
     /* ── Social icons (top-left) ── */
     .social-icons {
       position: absolute; top: 53px; left: 62px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
     }
     .desktop-social-bar {
       position: relative; display: inline-block;
+    }
+    .desktop-email-link {
+      color: #fff;
+      font-family: 'Rethink Sans', Arial, sans-serif;
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+      transition: filter 0.3s ease;
     }
     .desktop-social-bar img {
       height: 36px; width: auto; display: block;
@@ -175,9 +186,19 @@
     }
     .mobile-social {
       position: absolute; bottom: 7%; right: 24px;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
     }
     .mobile-social-wrap {
       position: relative; display: inline-block;
+    }
+    .mobile-email-link {
+      color: #fff;
+      font-family: 'Rethink Sans', Arial, sans-serif;
+      font-size: 11px;
+      text-decoration: none;
+      white-space: nowrap;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
     .mobile-social-wrap img {
       display: block; height: 28px; width: auto;
@@ -361,8 +382,15 @@
       gap: 10px;
       padding-top: 16px;
     }
+    .manifesto-footer-social {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding-bottom: 20px;
+    }
     .manifesto-footer-social .mobile-social-wrap img {
       height: 24px;
+    }
+    .manifesto-footer-social .mobile-email-link {
+      font-size: 10px;
     }
 
     /* Tagline + social + shuffle transitions */
@@ -440,11 +468,11 @@
     <div class="social-icons" id="social-icons">
       <div class="desktop-social-bar">
         <img src="iconsDesktop/social.svg" alt="Social links" draggable="false" />
-        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="desktop-social-link" style="left:0;width:22%"></a>
-        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="desktop-social-link" style="left:22%;width:26%"></a>
-        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="desktop-social-link" style="left:52%;width:24%"></a>
-        <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="desktop-social-link" style="left:78%;width:22%"></a>
+        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="desktop-social-link" style="left:0;width:33%"></a>
+        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="desktop-social-link" style="left:33%;width:34%"></a>
+        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="desktop-social-link" style="left:67%;width:33%"></a>
       </div>
+      <a href="mailto:meet@mktg-stack.com" class="desktop-email-link">meet@mktg-stack.com</a>
     </div>
 
     <!-- Grid wordmark — top-right -->
@@ -479,11 +507,11 @@
     <div class="mobile-social">
       <div class="mobile-social-wrap">
         <img src="iconsMob/Asset 10.svg" alt="Social links" draggable="false" />
-        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:22%"></a>
-        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:22%;width:26%"></a>
-        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:52%;width:24%"></a>
-        <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="mobile-social-link" style="left:78%;width:22%"></a>
+        <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:33%"></a>
+        <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:33%;width:34%"></a>
+        <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:67%;width:33%"></a>
       </div>
+      <a href="mailto:meet@mktg-stack.com" class="mobile-email-link">meet@mktg-stack.com</a>
     </div>
     <button class="mobile-shuffle" id="mobile-shuffle-btn" aria-label="Shuffle treatment">
       <img src="iconsMob/Asset 9.svg" alt="Shuffle" draggable="false" />
@@ -509,11 +537,11 @@
         <div class="manifesto-footer-social">
           <div class="mobile-social-wrap">
             <img src="iconsMob/Asset 10.svg" alt="Social links" draggable="false" />
-            <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:22%"></a>
-            <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:22%;width:26%"></a>
-            <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:52%;width:24%"></a>
-            <a href="mailto:meet@mktg-stack.com" aria-label="Email" class="mobile-social-link" style="left:78%;width:22%"></a>
+            <a href="https://www.linkedin.com/company/mktgstack/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn" class="mobile-social-link" style="left:0;width:33%"></a>
+            <a href="https://x.com/MktgStack" target="_blank" rel="noopener" aria-label="X" class="mobile-social-link" style="left:33%;width:34%"></a>
+            <a href="https://www.instagram.com/mktgstack" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-social-link" style="left:67%;width:33%"></a>
           </div>
+          <a href="mailto:meet@mktg-stack.com" class="mobile-email-link">meet@mktg-stack.com</a>
         </div>
       </div>
     </div>
@@ -707,6 +735,11 @@
       '1x/Asset 2.png',
       '1x/Asset 3.png',
       '1x/Asset 4.png',
+      'new stickers/Asset 26.png',
+      'new stickers/Asset 27.png',
+      'new stickers/Asset 28.png',
+      'new stickers/Asset 29.png',
+      'new stickers/Asset 30.png',
     ];
     let stickerIndex = 0;
 
