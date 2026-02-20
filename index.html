@@ -1085,9 +1085,12 @@
           const by = H * MOB_LOGO_Y_POS - bh / 2;
           mainCtx.drawImage(logoCanvas, 0, 0, logoCanvas.width, logoCanvas.height, bx, by, bw, bh);
         } else {
-          /* Match cover-crop zoom: when viewport is narrower than 16:9,
-             the treatment zooms in extra — the logo overlay must track that */
-          const coverZoom = Math.max(1, DESKTOP_BASE_ASPECT / (W / H));
+          /* Match cover-crop zoom: when viewport is narrower than the
+             treatment source AR, the cover-crop zooms in — track that */
+          const tImg = treatmentImages[currentTreatment];
+          const srcAR = (tImg && tImg.naturalWidth && tImg.naturalHeight)
+            ? tImg.naturalWidth / tImg.naturalHeight : DESKTOP_BASE_ASPECT;
+          const coverZoom = Math.max(1, srcAR / (W / H));
           const adjScale = deskLogoScale * coverZoom;
           const maxW = W * adjScale, maxH = H * adjScale;
           const fit = containRect(logoCanvas.width, logoCanvas.height, maxW, maxH);
