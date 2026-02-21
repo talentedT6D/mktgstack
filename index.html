@@ -258,7 +258,7 @@
       width: 42%;
       display: flex; align-items: flex-start; justify-content: flex-start;
       opacity: 0; transform: translateY(16px);
-      transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+      transition: opacity 0.3s, transform 0.3s;
       pointer-events: none; z-index: 1;
     }
     .desktop-manifesto-text img {
@@ -284,6 +284,7 @@
     }
     #ui-overlay.desktop-manifesto-mode .desktop-manifesto-text {
       opacity: 1; transform: translateY(0); pointer-events: auto;
+      transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
     }
     #ui-overlay.desktop-manifesto-mode .desktop-manifesto-back {
       opacity: 1; pointer-events: auto;
@@ -834,11 +835,13 @@
       mobLogoScaleTarget = 1.12;
       mobLogoYPosTarget  = 0.39;
       mobileUI.classList.remove('manifesto-mode');
-      /* Desktop */
-      deskLogoScaleTarget = 0.525;
-      deskLogoYPosTarget  = 0.5;
-      deskLogoXPosTarget  = 0.5;
+      /* Desktop — fade text out first, then move logo back */
       uiOverlay.classList.remove('desktop-manifesto-mode');
+      setTimeout(() => {
+        deskLogoScaleTarget = 0.525;
+        deskLogoYPosTarget  = 0.5;
+        deskLogoXPosTarget  = 0.5;
+      }, 350);
     }
 
     if (taglineBtn)            taglineBtn.addEventListener('click', enterManifesto);
