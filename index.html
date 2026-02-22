@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -279,16 +279,44 @@
     /* ── Desktop manifesto mode elements ── */
     .desktop-manifesto-text {
       position: absolute;
-      top: calc(12% + clamp(40px, 5vw, 75px) + 15px); right: clamp(20px, 4vw, 62px); bottom: 12%;
+      top: 50%; right: clamp(20px, 4vw, 62px);
+      transform: translateY(-50%);
       width: 43.75%;
       display: flex; align-items: flex-start; justify-content: flex-start;
-      opacity: 0; transform: translateY(16px);
+      opacity: 0; transform: translateY(calc(-50% + 16px));
       transition: opacity 0.3s, transform 0.3s;
       pointer-events: none; z-index: 1;
     }
     .desktop-manifesto-text img {
       width: 100%; height: 100%;
       object-fit: contain; object-position: top left;
+    }
+    .manifesto-copy {
+      color: #FAFF40;
+      font-family: "Rethink Sans", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      text-align: justify;
+      text-align-last: left;
+      line-height: 1.35;
+      word-spacing: -0.5px;
+      letter-spacing: -0.3px;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.4)) drop-shadow(-1px 0 0 rgba(0,0,0,0.4))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.4)) drop-shadow(0 -1px 0 rgba(0,0,0,0.4));
+    }
+    .manifesto-copy p { margin: 0 0 1em; }
+    .manifesto-copy p:last-child { margin-bottom: 0; }
+    .desktop-manifesto-text .manifesto-copy {
+      font-size: clamp(14px, 1.25vw, 19px);
+    }
+    .manifesto-body .manifesto-copy {
+      font-size: clamp(11px, 3vw, 14px);
+      font-weight: 500;
+      width: 85%;
+      text-align-last: center;
+      letter-spacing: -0.5px;
+      word-spacing: -1px;
     }
     .desktop-manifesto-back {
       position: absolute; bottom: clamp(10px, 3.5vw, 49px); left: clamp(10px, 4vw, 62px);
@@ -308,7 +336,7 @@
       opacity: 0; pointer-events: none;
     }
     #ui-overlay.desktop-manifesto-mode .desktop-manifesto-text {
-      opacity: 1; transform: translateY(0); pointer-events: auto;
+      opacity: 1; transform: translateY(-50%); pointer-events: auto;
       transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
     }
     #ui-overlay.desktop-manifesto-mode .desktop-manifesto-back {
@@ -438,8 +466,8 @@
     }
     .manifesto-body {
       flex: 1; min-height: 0;
-      display: flex; justify-content: center;
-      padding: 20px 4px 10px;
+      display: flex; justify-content: center; align-items: center;
+      padding: 10px 4px;
       overflow: hidden;
     }
     .manifesto-body img {
@@ -571,7 +599,11 @@
 
     <!-- Desktop manifesto text (fades in on right side of logo) -->
     <div class="desktop-manifesto-text" id="desktop-manifesto-text">
-      <img src="iconsDesktop/manifesto-text.svg" alt="Manifesto" draggable="false" />
+      <div class="manifesto-copy">
+        <p>For modern brands and founders, expectations from marketing have fundamentally changed. The big campaign isn't marketing's centre of gravity any more. It reflects an era that no longer mirrors how audiences discover, engage, and make decisions.</p>
+        <p>The most effective brands are building their own distribution, telling stories through founders and operators, developing content and IP as <span style="white-space:nowrap">long-term</span> assets, and using AI and continuous optimisation to improve performance over time. They treat marketing as an <span style="white-space:nowrap">always-on</span> system designed to learn, adapt, and compound.</p>
+        <p>mktgstack is built for this reality. We are structured more like a speedboat than a cruise ship. Fast, focused, and deliberately lean. Our <span style="white-space:nowrap">AI-leveraged</span> operating model enables <span style="white-space:nowrap">high-quality</span> execution that once required far larger teams and traditional agency infrastructure. We concentrate on the levers that drive behaviour, adoption, and growth. Because if the work does not change outcomes, it does not matter how good it looks.</p>
+      </div>
     </div>
     <button class="desktop-manifesto-back" id="desktop-manifesto-back-btn" aria-label="Back">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -615,7 +647,11 @@
       <div class="manifesto-logo-space"></div>
       <!-- Body text -->
       <div class="manifesto-body">
-        <img src="iconsMob/manifesto.svg" alt="Manifesto" draggable="false" />
+        <div class="manifesto-copy">
+          <p>For modern brands and founders, expectations from marketing have fundamentally changed. The big campaign isn't marketing's centre of gravity any more. It reflects an era that no longer mirrors how audiences discover, engage, and make decisions.</p>
+          <p>The most effective brands are building their own distribution, telling stories through founders and operators, developing content and IP as <span style="white-space:nowrap">long-term</span> assets, and using AI and continuous optimisation to improve performance over time. They treat marketing as an <span style="white-space:nowrap">always-on</span> system designed to learn, adapt, and compound.</p>
+          <p>mktgstack is built for this reality. We are structured more like a speedboat than a cruise ship. Fast, focused, and deliberately lean. Our <span style="white-space:nowrap">AI-leveraged</span> operating model enables <span style="white-space:nowrap">high-quality</span> execution that once required far larger teams and traditional agency infrastructure. We concentrate on the levers that drive behaviour, adoption, and growth. Because if the work does not change outcomes, it does not matter how good it looks.</p>
+        </div>
       </div>
       <!-- Footer -->
       <div class="manifesto-footer">
