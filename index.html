@@ -44,7 +44,7 @@
 
     /* ── Social icons (top-left) ── */
     .social-icons {
-      position: absolute; top: 53px; left: 62px;
+      position: absolute; top: clamp(10px, 4vw, 53px); left: clamp(10px, 4vw, 62px);
       display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
     }
     .desktop-social-bar {
@@ -61,7 +61,7 @@
       transition: filter 0.3s ease;
     }
     .desktop-social-bar img {
-      height: 36px; width: auto; display: block;
+      height: clamp(24px, 3vw, 36px); width: auto; display: block;
       filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
     .desktop-social-link {
@@ -71,8 +71,8 @@
 
     /* ── Grid wordmark (top-right) ── */
     .grid-wordmark {
-      position: absolute; top: 48px; right: 62px;
-      height: 58px; width: auto;
+      position: absolute; top: clamp(10px, 3.5vw, 48px); right: clamp(10px, 4vw, 62px);
+      height: clamp(28px, 4.5vw, 58px); width: auto;
       display: block; text-decoration: none;
       transition: filter 0.3s ease;
       filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
@@ -84,7 +84,7 @@
 
     /* ── Sticker button (bottom-left, top layer) ── */
     .stickermktgstack {
-      position: fixed; bottom: 49px; left: 62px;
+      position: fixed; bottom: clamp(10px, 3.5vw, 49px); left: clamp(10px, 4vw, 62px);
       z-index: 10001;
       background: none; border: none;
       padding: 40px;
@@ -93,7 +93,7 @@
       transition: opacity 0.3s ease;
     }
     .stickermktgstack img {
-      height: 56px; width: auto;
+      height: clamp(36px, 4vw, 56px); width: auto;
       pointer-events: none;
       display: block;
       transition: transform 0.15s ease;
@@ -263,11 +263,10 @@
     /* ── Desktop tagline below logo ── */
     .desktop-tagline-btn {
       position: absolute;
-      bottom: 77px;
+      bottom: clamp(20px, 5vw, 77px);
       left: 50%;
       transform: translate(-50%, 50%);
-      width: 28.8%;
-      max-width: 416px;
+      width: clamp(200px, 28.8%, 416px);
       z-index: 4;
       background: none; border: none; padding: 0; cursor: pointer;
       transition: opacity 0.3s ease;
@@ -280,7 +279,7 @@
     /* ── Desktop manifesto mode elements ── */
     .desktop-manifesto-text {
       position: absolute;
-      top: calc(12% + 75px); right: 62px; bottom: 12%;
+      top: calc(12% + clamp(40px, 5vw, 75px)); right: clamp(20px, 4vw, 62px); bottom: 12%;
       width: 43.75%;
       display: flex; align-items: flex-start; justify-content: flex-start;
       opacity: 0; transform: translateY(16px);
@@ -292,7 +291,7 @@
       object-fit: contain; object-position: top left;
     }
     .desktop-manifesto-back {
-      position: absolute; bottom: 49px; left: 62px;
+      position: absolute; bottom: clamp(10px, 3.5vw, 49px); left: clamp(10px, 4vw, 62px);
       background: none; border: none; padding: 4px;
       cursor: pointer; opacity: 0;
       transition: opacity 0.3s 0.3s;
@@ -329,6 +328,12 @@
     }
 
     /* Phone / portrait — switch to mobile UI */
+    /* Tablet */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .desktop-tagline-btn { width: 36%; }
+      .desktop-manifesto-text { width: 55%; }
+    }
+
     @media (max-width: 768px) {
       .social-icons { display: none; }
       .grid-wordmark { display: none; }
@@ -361,12 +366,18 @@
       .sticker-stamp { width: 120px; }
     }
 
-    /* Landscape phone — tighter vertical spacing */
-    @media (max-height: 500px) {
-      .social-icons { top: 8px; left: 10px; }
-      .grid-wordmark { top: 6px; right: 10px; height: 24px; }
-      .shuffle-btn { bottom: 8px; left: 10px; }
-      .stickermktgstack { bottom: 8px; left: 10px; }
+    /* Landscape phone — switch to mobile UI */
+    @media (max-height: 500px) and (max-width: 1024px) {
+      .social-icons { display: none; }
+      .grid-wordmark { display: none; }
+      .shuffle-btn { display: none; }
+      .stickermktgstack { display: none; }
+      .desktop-tagline-btn { display: none; }
+      .desktop-manifesto-text { display: none; }
+      .desktop-manifesto-back { display: none; }
+      .mobile-ui { display: block; }
+      .shufflemobMktg { display: block; }
+      .sticker-hint { display: block; }
     }
 
     /* Hide sticker cursor on touch — finger is the cursor */
@@ -1199,6 +1210,7 @@
 
       /* 2. Draw white logo — ALWAYS visible in both modes */
       const isPortrait = H > W;
+      const isMobileLayout = isPortrait || (H <= 500 && W <= 1024);
       /* ── Mobile logo tuning (lerp toward target each frame) ── */
       mobLogoScale += (mobLogoScaleTarget - mobLogoScale) * LOGO_LERP;
       mobLogoYPos  += (mobLogoYPosTarget  - mobLogoYPos)  * LOGO_LERP;
@@ -1210,7 +1222,7 @@
       deskLogoXPos  += (deskLogoXPosTarget  - deskLogoXPos)  * LOGO_LERP;
       if (logoCanvas.width > 1) {
         mainCtx.globalCompositeOperation = 'screen';
-        if (isPortrait) {
+        if (isMobileLayout) {
           /* Width-fit with independent horizontal scaling */
           const wf = widthFitRect(logoCanvas.width, logoCanvas.height, W, H);
           const bw = wf.dw * MOB_LOGO_W_SCALE;
@@ -1234,7 +1246,9 @@
           const dRef = desktopTreatmentRect(tw, th, refW, H, align);
           const cropCorrection = dRef.sw / dCur.sw;
           const adjScale = deskLogoScale * cropCorrection;
-          const lw = adjScale * W;
+          /* Cap logo size on square/portrait-ish viewports so it doesn't overwhelm */
+          const arClamp = Math.min(1, (W / H) / (16 / 9));
+          const lw = adjScale * W * arClamp;
           const lh = lw * logoCanvas.height / logoCanvas.width;
           const bx = W * deskLogoXPos - lw / 2;
           const by = H * deskLogoYPos - lh / 2;
