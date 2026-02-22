@@ -244,6 +244,20 @@
     }
     .shufflemobMktg.shuffling img { animation: shufflePop 0.4s ease; }
 
+    .sticker-hint {
+      display: none;
+      position: fixed; bottom: calc(7% + 54px); left: 18px;
+      color: #fff;
+      font-family: 'Rethink Sans', Arial, sans-serif;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 10001;
+      filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55))
+              drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
+    }
+
     /* ── Mobile responsive ── */
 
     /* ── Desktop tagline below logo ── */
@@ -325,6 +339,7 @@
       .desktop-manifesto-back { display: none; }
       .mobile-ui { display: block; }
       .shufflemobMktg { display: block; }
+      .sticker-hint { display: block; }
       .sticker-stamp { width: 200px; }
       .sticker-cursor { width: 200px; }
     }
@@ -595,6 +610,7 @@
   <button class="shufflemobMktg" id="shufflemobMktg" aria-label="Shuffle treatment">
     <img src="iconsMob/Asset 9.svg" alt="Shuffle" draggable="false" />
   </button>
+  <div class="sticker-hint" id="sticker-hint">Tap the screen</div>
 
   <!-- Sticker cursor preview + placement layer -->
   <img class="sticker-cursor" id="sticker-cursor" src="sticker.png" alt="" draggable="false" />
@@ -793,10 +809,21 @@
     let stickerIndex = 0;
 
     /* Shuffle toggle logic */
+    const stickerHint = document.getElementById('sticker-hint');
     function toggleStickerMode(btnEl) {
       stickerMode = !stickerMode;
       document.body.classList.toggle('sticker-mode', stickerMode);
       labelEl.textContent = stickerMode ? 'sticker' : TREATMENTS[currentTreatment].name;
+
+      /* Show/hide mobile hint */
+      if (stickerHint) {
+        if (stickerMode) {
+          stickerHint.style.opacity = '1';
+          setTimeout(() => { stickerHint.style.opacity = '0'; }, 2500);
+        } else {
+          stickerHint.style.opacity = '0';
+        }
+      }
 
       /* Clear stickers when exiting sticker mode */
       if (!stickerMode) {
