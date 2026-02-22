@@ -220,21 +220,29 @@
       position: absolute; top: 0; bottom: 0;
       text-decoration: none;
     }
-    .mobile-shuffle {
-      position: absolute; bottom: 7%; left: 18px;
+    .mobile-shuffle { display: none; }
+
+    /* ── Mobile sticker/shuffle button (fixed, top layer) ── */
+    .shufflemobMktg {
+      display: none;
+      position: fixed; bottom: 7%; left: 18px;
       background: none; border: none;
-      padding: 10px;
+      padding: 20px;
+      margin: -10px;
       cursor: pointer;
       z-index: 10001;
-      transition: transform 0.15s ease;
+      transition: opacity 0.3s ease, transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .mobile-shuffle:active { transform: scale(0.92); }
-    .mobile-shuffle img {
+    .shufflemobMktg:active img { transform: scale(0.92); }
+    .shufflemobMktg img {
       height: 34px; width: auto;
+      pointer-events: none;
+      display: block;
+      transition: transform 0.15s ease;
       filter: drop-shadow(1px 0 0 rgba(0,0,0,0.55)) drop-shadow(-1px 0 0 rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(0,0,0,0.55)) drop-shadow(0 -1px 0 rgba(0,0,0,0.55));
     }
-    .mobile-shuffle.shuffling { animation: shufflePop 0.4s ease; }
+    .shufflemobMktg.shuffling img { animation: shufflePop 0.4s ease; }
 
     /* ── Mobile responsive ── */
 
@@ -316,6 +324,7 @@
       .desktop-manifesto-text { display: none; }
       .desktop-manifesto-back { display: none; }
       .mobile-ui { display: block; }
+      .shufflemobMktg { display: block; }
       .sticker-stamp { width: 200px; }
       .sticker-cursor { width: 200px; }
     }
@@ -324,7 +333,7 @@
       .mobile-wordmark { height: 38px; }
       .mobile-tagline-btn { width: 86%; }
       .mobile-social-wrap img { height: 24px; }
-      .mobile-shuffle img { height: 30px; }
+      .shufflemobMktg img { height: 30px; }
       .sticker-stamp { width: 140px; }
       .sticker-cursor { width: 140px; }
     }
@@ -333,7 +342,7 @@
       .mobile-wordmark { height: 32px; }
       .mobile-tagline-btn { width: 88%; }
       .mobile-social-wrap img { height: 22px; }
-      .mobile-shuffle img { height: 28px; }
+      .shufflemobMktg img { height: 28px; }
       .sticker-stamp { width: 120px; }
     }
 
@@ -431,6 +440,9 @@
       opacity: 0; pointer-events: none;
     }
     .mobile-ui.manifesto-mode .mobile-shuffle {
+      opacity: 0; pointer-events: none;
+    }
+    .mobile-ui.manifesto-mode ~ .shufflemobMktg {
       opacity: 0; pointer-events: none;
     }
     .mobile-ui.manifesto-mode .mobile-social {
@@ -577,6 +589,11 @@
   <!-- Desktop sticker toggle (top-layer, outside overlay) -->
   <button class="stickermktgstack" id="stickermktgstack" aria-label="Shuffle treatment">
     <img src="iconsDesktop/shuffle.svg" alt="Shuffle" draggable="false" />
+  </button>
+
+  <!-- Mobile sticker toggle (top-layer, outside overlay) -->
+  <button class="shufflemobMktg" id="shufflemobMktg" aria-label="Shuffle treatment">
+    <img src="iconsMob/Asset 9.svg" alt="Shuffle" draggable="false" />
   </button>
 
   <!-- Sticker cursor preview + placement layer -->
@@ -800,10 +817,16 @@
     /* Desktop shuffle button */
     shuffleEl.addEventListener('click', () => toggleStickerMode(shuffleEl));
 
-    /* Mobile shuffle button */
+    /* Mobile shuffle button (old — hidden) */
     const mobileShuffleEl = document.getElementById('mobile-shuffle-btn');
     if (mobileShuffleEl) {
       mobileShuffleEl.addEventListener('click', () => toggleStickerMode(mobileShuffleEl));
+    }
+
+    /* Mobile shuffle button (new — fixed top layer) */
+    const shuffleMobEl = document.getElementById('shufflemobMktg');
+    if (shuffleMobEl) {
+      shuffleMobEl.addEventListener('click', () => toggleStickerMode(shuffleMobEl));
     }
 
     /* ── Manifesto mode (in-page transition) ── */
@@ -915,15 +938,32 @@
       stickerCursor.src = STICKER_SRCS[stickerIndex];
     }
 
+    /* Check if point overlaps the shuffle button */
+    function isOverShuffleBtn(x, y) {
+      const btns = [document.getElementById('shufflemobMktg'), document.getElementById('mobile-shuffle-btn'), shuffleEl];
+      for (const btn of btns) {
+        if (!btn) continue;
+        const r = btn.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return true;
+      }
+      return false;
+    }
+
     /* Click/tap to place sticker */
     stickerLayer.addEventListener('click', (e) => {
+      if (isOverShuffleBtn(e.clientX, e.clientY)) return;
       placeSticker(e.clientX, e.clientY);
     });
     /* Touch support for sticker placement */
     stickerLayer.addEventListener('touchend', (e) => {
       if (!stickerMode || !e.changedTouches.length) return;
-      e.preventDefault();
       const t = e.changedTouches[0];
+      if (isOverShuffleBtn(t.clientX, t.clientY)) {
+        const btn = document.getElementById('mobile-shuffle-btn') || shuffleEl;
+        if (btn) btn.click();
+        return;
+      }
+      e.preventDefault();
       placeSticker(t.clientX, t.clientY);
     });
 
