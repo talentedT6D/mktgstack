@@ -366,16 +366,31 @@
       .sticker-stamp { width: 120px; }
     }
 
-    /* Landscape phone — switch to mobile UI */
-    @media (max-height: 500px) and (max-width: 1024px) {
-      .social-icons { display: none; }
-      .grid-wordmark { display: none; }
-      .shuffle-btn { display: none; }
-      .stickermktgstack { display: none; }
-      .desktop-tagline-btn { display: none; }
-      .desktop-manifesto-text { display: none; }
-      .desktop-manifesto-back { display: none; }
-      .mobile-ui { display: block; }
+    /* Landscape phone — show rotate overlay */
+    .rotate-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: #1a1a1a;
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px;
+      color: #fff;
+      font-family: 'Rethink Sans', Arial, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+    .rotate-overlay svg {
+      width: 44px; height: 44px;
+      opacity: 0.8;
+      animation: rotateHint 2s ease-in-out infinite;
+    }
+    @keyframes rotateHint {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-90deg); }
+    }
+    @media (max-height: 500px) and (orientation: landscape) and (max-width: 1024px) {
+      .rotate-overlay { display: flex; }
       .shufflemobMktg { display: block; }
       .sticker-hint { display: block; }
     }
@@ -509,6 +524,11 @@
 
   <canvas id="dot-grid" class="layer"></canvas>
   <canvas id="main-canvas" class="layer"></canvas>
+
+  <div class="rotate-overlay">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="1" width="12" height="22" rx="2" stroke="#fff" stroke-width="1.5"/><line x1="12" y1="19" x2="12" y2="19.01" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+    Please rotate your device to portrait
+  </div>
 
   <svg style="position:absolute;width:0;height:0;pointer-events:none;" aria-hidden="true">
     <defs>
