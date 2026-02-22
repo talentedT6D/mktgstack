@@ -224,6 +224,7 @@
       background: none; border: none;
       padding: 10px;
       cursor: pointer;
+      z-index: 10001;
       transition: transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
     }
@@ -418,6 +419,7 @@
 
     /* Disable tagline click in sticker mode */
     body.sticker-mode .mobile-tagline-btn { pointer-events: none; }
+    body.sticker-mode .mobile-shuffle { position: fixed; }
     body.sticker-mode .desktop-tagline-btn { pointer-events: none; }
 
     /* ── When manifesto is active ── */
